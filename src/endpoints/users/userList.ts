@@ -1,7 +1,8 @@
 import { OpenAPIRoute } from "chanfana";
 import { z } from "zod";
-import { getDB } from "../../db/db";
+import { getDB } from "../../db/dao";
 import { usersTable } from "../../db/schema";
+import { selectUserSchema } from "../../db/zod";
 import { AppContext } from "../../types";
 
 export class UserList extends OpenAPIRoute {
@@ -21,14 +22,7 @@ export class UserList extends OpenAPIRoute {
           "application/json": {
             schema: z.object({
               success: z.boolean(),
-              users: z.array(
-                z.object({
-                  id: z.number(),
-                  name: z.string(),
-                  age: z.number(),
-                  email: z.string()
-                })
-              )
+              users: z.array(selectUserSchema)
             })
           }
         }
@@ -52,9 +46,11 @@ export class UserList extends OpenAPIRoute {
       .limit(pageSize)
       .offset(page * pageSize);
 
+    const parsedRows = rows.map((row) => selectUserSchema.parse(row));
+
     return {
       success: true,
-      users: rows
+      users: parsedRows
     };
   }
 }
