@@ -13,7 +13,8 @@
     "format": "oxfmt . --write",
     "db:deploy": "wrangler d1 migrations apply drizzle_example --local",
     "db:deploy:remote": "wrangler d1 migrations apply drizzle_example --remote",
-    "db:generate": "drizzle-kit generate"
+    "db:generate": "drizzle-kit generate",
+    "docs": "chanfana --output docs/openapi.json src/index.ts"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.4.0",

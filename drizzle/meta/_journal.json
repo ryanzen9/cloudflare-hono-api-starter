@@ -8,6 +8,13 @@
       "when": 1782111253509,
       "tag": "0000_oval_triton",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1783498385140,
+      "tag": "0001_cold_starfox",
+      "breakpoints": true
     }
   ]
 }
