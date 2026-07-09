@@ -28,3 +28,12 @@
     - Cloudflare Workers: please read `./docs/.agents/cloudflare-workers.md` for Cloudflare Workers APIs, limits, and best practices.
     - Database: D1 (SQLite) and KV (key-value store) , please read `./docs/.agents/cloudflare-workers.md` for D1 and KV APIs, limits, and best practices.
     - ORM: Drizzle ORM (https://orm.drizzle.team/llms-full.txt)
+
+**Development Verification**
+    - After completing any development task, review the Git staging area to verify that only expected changes are included and that no unintended modifications are present.
+    - Before considering the task complete, perform a full validation process:
+      1. Run type checking to ensure there are no type errors.
+      2. Run code formatting checks and apply formatting if required.
+      3. Run the relevant test suite to verify functionality.
+      4. Run the project build process to ensure the application can be successfully compiled.
+    - If any validation step fails, investigate and resolve the issue before reporting the task as completed.
