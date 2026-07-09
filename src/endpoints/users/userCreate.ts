@@ -1,36 +1,17 @@
 import { OpenAPIRoute } from "chanfana";
-import { z } from "zod";
 import { getDB } from "../../db/dao";
 import { usersTable } from "../../db/schema";
-import { insertUserSchema, selectUserSchema } from "../../db/zod";
 import { AppContext } from "../../types";
+import { ApiRes, RequestBody, ResponseBody } from "../rest";
+import { insertUserDto, userDto } from "./userDto";
+import { insertUserSchema } from "./userSchema";
 
 export class UserCreate extends OpenAPIRoute {
   schema = {
     tags: ["Users"],
     summary: "Create a new User",
-    request: {
-      body: {
-        content: {
-          "application/json": {
-            schema: insertUserSchema
-          }
-        }
-      }
-    },
-    responses: {
-      "201": {
-        description: "Returns the created user",
-        content: {
-          "application/json": {
-            schema: z.object({
-              success: z.boolean(),
-              user: selectUserSchema
-            })
-          }
-        }
-      }
-    }
+    request: RequestBody(insertUserDto),
+    responses: ResponseBody(userDto)
   };
 
   async handle(c: AppContext) {
@@ -40,19 +21,18 @@ export class UserCreate extends OpenAPIRoute {
 
     const db = getDB(c.env);
 
-    const parsed = insertUserSchema.parse(userData);
+    const insertData: typeof usersTable.$inferInsert = {
+      ...userData,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
 
-    const result = await db.insert(usersTable).values(parsed);
+    const parsed = insertUserSchema.parse(insertData);
 
-    return c.json(
-      {
-        success: true,
-        user: {
-          id: result.meta.last_row_id,
-          ...userData
-        }
-      },
-      201
-    );
+    const result = await db.insert(usersTable).values(parsed).returning();
+
+    const responseData = userDto.parse(result[0]);
+
+    return c.json(ApiRes.success(responseData), 201);
   }
 }

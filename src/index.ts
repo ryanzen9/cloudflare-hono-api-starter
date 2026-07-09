@@ -11,6 +11,7 @@ const openapi = fromHono(app, {
   docs_url: "/docs"
 });
 
+app.get("/", (c) => c.redirect("/docs"));
 app.get("/api/health", (c) => c.json({ message: "ok" }));
 
 openapi.get("/api/users", UserList);

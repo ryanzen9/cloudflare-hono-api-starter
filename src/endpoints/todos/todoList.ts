@@ -1,34 +1,17 @@
 import { OpenAPIRoute } from "chanfana";
-import { z } from "zod";
 import { getDB } from "../../db/dao";
 import { todosTable } from "../../db/schema";
-import { pageTodoSchema } from "../../db/zod";
 import { AppContext } from "../../types";
-import { ApiRes } from "../api";
+import { createPageQuerySchema } from "../dto";
+import { ApiRes, ResponseBody } from "../rest";
+import { pageTodoDto } from "./todoDto";
 
 export class TodoList extends OpenAPIRoute {
   schema = {
     tags: ["Todos"],
     summary: "List Todos",
-    request: {
-      query: z.object({
-        page: z.number().default(0).describe("Page number"),
-        pageSize: z.number().default(10).describe("Number of items per page")
-      })
-    },
-    responses: {
-      "200": {
-        description: "Returns a list of todos",
-        content: {
-          "application/json": {
-            schema: z.object({
-              success: z.boolean(),
-              data: z.array(pageTodoSchema)
-            })
-          }
-        }
-      }
-    }
+    request: createPageQuerySchema(),
+    responses: ResponseBody(pageTodoDto)
   };
 
   async handle(c: AppContext) {
@@ -44,8 +27,8 @@ export class TodoList extends OpenAPIRoute {
       .limit(pageSize)
       .offset(page * pageSize);
 
-    const parsedRows = rows.map((row) => pageTodoSchema.parse(row));
+    const parsedRows = rows.map((row) => pageTodoDto.parse(row));
 
-    return ApiRes.success(parsedRows);
+    return c.json(ApiRes.success(parsedRows), 200);
   }
 }

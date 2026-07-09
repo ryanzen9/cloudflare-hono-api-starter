@@ -1,9 +1,10 @@
 {
+  "js/ts.experimental.useTsgo": true,
+
   "oxc.enable": true,
   "oxc.enable.oxlint": true,
   "oxc.enable.oxfmt": true,
   "editor.defaultFormatter": "oxc.oxc-vscode",
-  "editor.formatOnSaveMode": "file",
   "editor.codeActionsOnSave": {
     "source.format.oxc": "always",
     "source.fixAll.oxc": "always"
