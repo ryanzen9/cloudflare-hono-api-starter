@@ -11,5 +11,11 @@
   },
   "files.associations": {
     "wrangler.json": "jsonc"
+  },
+
+  "[markdown]": {
+    "editor.defaultFormatter": null,
+
+    "editor.formatOnSave": false
   }
 }
