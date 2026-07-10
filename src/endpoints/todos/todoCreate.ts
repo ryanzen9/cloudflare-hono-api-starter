@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { createTodo } from "../../db/queries";
+import { TodoQueries } from "../../db/queries";
 
 import { AppContext } from "../../types";
 import { ApiRes, RequestBody, ResponseArrayBody } from "../rest";
@@ -28,7 +28,7 @@ export class TodoCreate extends OpenAPIRoute {
       updatedAt: new Date().toISOString()
     });
 
-    const result = await createTodo(db, insertedTodo);
+    const result = await TodoQueries.create(db, insertedTodo);
 
     return c.json(ApiRes.success(result), 201);
   }

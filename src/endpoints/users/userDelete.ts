@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { deleteUserById } from "../../db/queries";
+import { UserQueries } from "../../db/queries";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import { ApiRes, RequestParams, ResponseObjectBody } from "../rest";
@@ -15,7 +15,7 @@ export class UserDelete extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
-    const result = await deleteUserById(getDB(c.env), data.params.id);
+    const result = await UserQueries.deleteById(getDB(c.env), data.params.id);
 
     if (!result[0]) {
       return c.json(ApiRes.error("User not found"), 404);

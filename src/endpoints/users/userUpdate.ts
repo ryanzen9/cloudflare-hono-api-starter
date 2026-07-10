@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { updateUserById } from "../../db/queries";
+import { UserQueries } from "../../db/queries";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import {
@@ -29,7 +29,11 @@ export class UserUpdate extends OpenAPIRoute {
       ...data.body,
       updatedAt: new Date().toISOString()
     });
-    const result = await updateUserById(getDB(c.env), data.params.id, userData);
+    const result = await UserQueries.updateById(
+      getDB(c.env),
+      data.params.id,
+      userData
+    );
 
     if (!result[0]) {
       return c.json(ApiRes.error("User not found"), 404);

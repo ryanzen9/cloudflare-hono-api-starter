@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { listTodos } from "../../db/queries";
+import { TodoQueries } from "../../db/queries";
 import { AppContext } from "../../types";
 import { createPageQuerySchema } from "../dto";
 import { ApiRes, ResponseArrayBody } from "../rest";
@@ -21,7 +21,7 @@ export class TodoList extends OpenAPIRoute {
 
     const db = getDB(c.env);
 
-    const rows = await listTodos(db, page, pageSize);
+    const rows = await TodoQueries.list(db, page, pageSize);
 
     const parsedRows = rows.map((row) => pageTodoDto.parse(row));
 

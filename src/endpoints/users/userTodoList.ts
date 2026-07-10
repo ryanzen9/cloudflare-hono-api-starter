@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { listTodosByUserId } from "../../db/queries";
+import { TodoQueries } from "../../db/queries";
 import { AppContext } from "../../types";
 import { createPageQuerySchema } from "../dto";
 import { userIdParamDto } from "../params";
@@ -20,7 +20,7 @@ export class UserTodoList extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
-    const rows = await listTodosByUserId(
+    const rows = await TodoQueries.listByUserId(
       getDB(c.env),
       data.params.userId,
       data.query.page,

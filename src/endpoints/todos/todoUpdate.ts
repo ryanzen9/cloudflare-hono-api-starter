@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { updateTodoById } from "../../db/queries";
+import { TodoQueries } from "../../db/queries";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import {
@@ -29,7 +29,11 @@ export class TodoUpdate extends OpenAPIRoute {
       ...data.body,
       updatedAt: new Date().toISOString()
     });
-    const result = await updateTodoById(getDB(c.env), data.params.id, todoData);
+    const result = await TodoQueries.updateById(
+      getDB(c.env),
+      data.params.id,
+      todoData
+    );
 
     if (!result[0]) {
       return c.json(ApiRes.error("Todo not found"), 404);

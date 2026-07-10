@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { listUsers } from "../../db/queries";
+import { UserQueries } from "../../db/queries";
 import { AppContext } from "../../types";
 import { createPageQuerySchema } from "../dto";
 import { ApiRes, ResponseArrayBody } from "../rest";
@@ -21,7 +21,7 @@ export class UserList extends OpenAPIRoute {
 
     const db = getDB(c.env);
 
-    const rows = await listUsers(db, page, pageSize);
+    const rows = await UserQueries.list(db, page, pageSize);
 
     const parsedRows = rows.map((row) => pageUserDto.parse(row));
 
