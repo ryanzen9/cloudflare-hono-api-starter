@@ -98,6 +98,18 @@ The primary tech stack used in this codebase is:
 - Install dependencies with `bun install --frozen-lockfile` and run project scripts with `bun run <script>`.
 - Keep Node.js available because Wrangler and Chanfana use the Node.js toolchain during local development and deployment.
 
+---
+
+## Testing
+
+- Use Vitest with `@cloudflare/vitest-pool-workers` for all Worker tests. Configure the pool in `vitest.config.ts` using `cloudflareTest()` and `wrangler.jsonc`.
+- Store tests in `test/`, and type-check them with `test/tsconfig.json`.
+  - Put Hono or pure logic unit tests in `test/unit/`.
+  - Put Worker binding, D1, or multi-component API tests in `test/integration/<resource>/`, grouped by API resource (for example, `users/` and `todos/`).
+- Apply D1 migrations to the isolated test database via the `TEST_MIGRATIONS` binding in `test/setup.ts`; never use the local development database for automated tests.
+- Test Hono routes directly with `app.request()` when bindings are not needed. Test D1-backed API flows with `exports.default.fetch()` from `cloudflare:workers`.
+- Run tests with `bun run test`; do not use `bun test`, which runs Bun's built-in test runner.
+
 ### References
 
 - **Web Framework**

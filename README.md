@@ -23,3 +23,13 @@ This is an example project made to be used as a quick start into building OpenAP
 1. Run `bun run start` to start a local instance of the API.
 2. Open `http://localhost:8787/` in your browser to see the Swagger interface where you can try the endpoints.
 3. Changes made in the `src/` folder will automatically trigger the server to reload, you only need to refresh the Swagger interface.
+
+## Testing
+
+Run the Cloudflare Workers integration tests with:
+
+```bash
+bun run test
+```
+
+Use `bun run test:watch` while developing tests. Do not use `bun test`, which invokes Bun's built-in test runner instead of Vitest.
