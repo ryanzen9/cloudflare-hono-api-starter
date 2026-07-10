@@ -33,13 +33,7 @@ export const RequestBody = <T extends z.ZodTypeAny>(data: T) => {
 
 export const RequestParams = <T extends z.ZodTypeAny>(data: T) => {
   return {
-    params: {
-      content: {
-        "application/json": {
-          schema: data
-        }
-      }
-    }
+    params: data
   };
 };
 
@@ -55,7 +49,43 @@ export const RequestQuery = <T extends z.ZodTypeAny>(data: T) => {
   };
 };
 
-export const ResponseBody = <T extends z.ZodTypeAny>(data: T) => {
+export const ResponseObjectBody = <T extends z.ZodTypeAny>(data: T) => ({
+  "200": {
+    description: "Request successful",
+    content: {
+      "application/json": {
+        schema: z.object({
+          success: z.boolean(),
+          data
+        })
+      }
+    }
+  },
+  "201": {
+    description: "Resource created",
+    content: {
+      "application/json": {
+        schema: z.object({
+          success: z.boolean(),
+          data
+        })
+      }
+    }
+  },
+  "404": {
+    description: "Not found",
+    content: {
+      "application/json": {
+        schema: z.object({
+          success: z.boolean(),
+          error: z.object({ message: z.string() })
+        })
+      }
+    }
+  }
+});
+
+export const ResponseArrayBody = <T extends z.ZodTypeAny>(data: T) => {
   return {
     "200": {
       description: "Query successful",

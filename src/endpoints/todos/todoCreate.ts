@@ -1,9 +1,9 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { todosTable } from "../../db/schema";
+import { createTodo } from "../../db/queries";
 
 import { AppContext } from "../../types";
-import { ApiRes, RequestBody, ResponseBody } from "../rest";
+import { ApiRes, RequestBody, ResponseArrayBody } from "../rest";
 import { createTodoDto, pageTodoDto } from "./todoDto";
 import { insertTodoSchema } from "./todoSchema";
 
@@ -12,7 +12,7 @@ export class TodoCreate extends OpenAPIRoute {
     tags: ["Todos"],
     summary: "Create a new Todo",
     request: RequestBody(createTodoDto),
-    responses: ResponseBody(pageTodoDto)
+    responses: ResponseArrayBody(pageTodoDto)
   };
 
   async handle(c: AppContext) {
@@ -21,8 +21,6 @@ export class TodoCreate extends OpenAPIRoute {
     const todoData = data.body;
     const db = getDB(c.env);
 
-    console.log("Creating a new todo with data:", todoData);
-
     const insertedTodo = insertTodoSchema.parse({
       ...todoData,
       completed: 0,
@@ -30,9 +28,7 @@ export class TodoCreate extends OpenAPIRoute {
       updatedAt: new Date().toISOString()
     });
 
-    console.log("Parsed todo data for insertion:", insertedTodo);
-
-    const result = await db.insert(todosTable).values(insertedTodo).returning();
+    const result = await createTodo(db, insertedTodo);
 
     return c.json(ApiRes.success(result), 201);
   }

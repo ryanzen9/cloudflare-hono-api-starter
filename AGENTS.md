@@ -6,6 +6,8 @@
 
 **Hazardous Operation**: The following operations must still be confirmed: deleting files, large-scale refactoring, modifying git history, git commit, git push, changing environment configuration, changing CI, and database changes.
 
+**Prohibited Matters**: Unless explicitly stated by the user, it is prohibited to call skills related to `superpower`.
+
 **Progressive Disclosure**
     - Follow the principle of progressive disclosure when working with project instructions and documentation.
     - Avoid loading or maintaining unnecessary context. Only introduce additional rules, details, or documentation when they are relevant to the current task.
@@ -16,7 +18,7 @@
     - For D1 database operations, prioritize using the local database for development.
     - All table migration files must be generated using `drizzle-kit`, stored in the `drizzle/migrations` directory, and the database connection must - properly configured in `drizzle.config.ts`.
     - Use the `wrangler d1 migrations apply` command to apply migrations to the D1 database.
-    - All table schemas must be defined in the `src/db/schema.ts` file. All CRUD operations for tables must be centralized in the `src/db/queries.ts` file.
+    - All table schemas must be defined in the `src/db/schema.ts` file. All CRUD operations for tables must be centralized in the `src/db/queries.ts` file.For each `queries` method, appropriate Chinese comments need to be added to describe its purpose, as well as the parameters and return value.
 
 **API Points**:
     - All API endpoints should be declared uniformly in `src/index.ts`, with queries using `GET` and write operations using `POST`.

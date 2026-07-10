@@ -19,3 +19,5 @@ export const insertUserDto = insertUserSchema.pick({
   age: true,
   email: true
 });
+
+export const updateUserDto = insertUserDto.partial();

@@ -15,3 +15,19 @@ export const pageTodoDto = createSelectSchema(todosTable).omit({
   updatedAt: true,
   userId: true
 });
+
+export const todoDto = createSelectSchema(todosTable).omit({
+  createdAt: true,
+  updatedAt: true
+});
+
+export const updateTodoDto = insertTodoSchema
+  .pick({
+    title: true,
+    completed: true,
+    userId: true,
+    description: true,
+    scheduleAt: true,
+    completedAt: true
+  })
+  .partial();

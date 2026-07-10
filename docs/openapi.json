@@ -11,9 +11,7 @@
   "paths": {
     "/api/users": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "List Users",
         "operationId": "get_UserList",
         "parameters": [
@@ -42,7 +40,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a list of users",
+            "description": "Query successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -51,49 +49,161 @@
                     "success": {
                       "type": "boolean"
                     },
-                    "users": {
+                    "data": {
                       "type": "array",
                       "items": {
                         "type": "object",
                         "properties": {
+                          "id": {
+                            "type": "number",
+                            "description": "The unique identifier of the user",
+                            "example": 1
+                          },
                           "name": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The name of the user",
+                            "example": "John Doe"
                           },
                           "age": {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
+                            "type": "number",
+                            "description": "The age of the user",
+                            "example": 30
                           },
                           "email": {
-                            "type": "string"
-                          },
-                          "id": {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
-                          },
-                          "createdAt": {
-                            "type": "string"
-                          },
-                          "updatedAt": {
-                            "type": "string"
+                            "type": "string",
+                            "description": "The email of the user",
+                            "example": "user@example.com"
                           }
                         },
-                        "required": [
-                          "name",
-                          "age",
-                          "email",
-                          "id",
-                          "createdAt",
-                          "updatedAt"
-                        ]
+                        "required": ["id", "name", "age", "email"]
                       }
                     }
                   },
-                  "required": [
-                    "success",
-                    "users"
-                  ]
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "id": {
+                            "type": "number",
+                            "description": "The unique identifier of the user",
+                            "example": 1
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "The name of the user",
+                            "example": "John Doe"
+                          },
+                          "age": {
+                            "type": "number",
+                            "description": "The age of the user",
+                            "example": 30
+                          },
+                          "email": {
+                            "type": "string",
+                            "description": "The email of the user",
+                            "example": "user@example.com"
+                          }
+                        },
+                        "required": ["id", "name", "age", "email"]
+                      }
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "stack": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -101,9 +211,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Create a new User",
         "operationId": "post_UserCreate",
         "requestBody": {
@@ -114,39 +222,28 @@
                 "properties": {
                   "name": {
                     "type": "string",
-                    "description": "The name of the user"
+                    "description": "The name of the user",
+                    "example": "John Doe"
                   },
                   "age": {
-                    "type": "integer",
-                    "minimum": -9007199254740991,
-                    "maximum": 9007199254740991,
-                    "description": "The age of the user"
+                    "type": "number",
+                    "description": "The age of the user",
+                    "example": 30
                   },
                   "email": {
                     "type": "string",
-                    "description": "The email of the user"
-                  },
-                  "createdAt": {
-                    "type": "string"
-                  },
-                  "updatedAt": {
-                    "type": "string"
+                    "description": "The email of the user",
+                    "example": "user@example.com"
                   }
                 },
-                "required": [
-                  "name",
-                  "age",
-                  "email",
-                  "createdAt",
-                  "updatedAt"
-                ]
+                "required": ["name", "age", "email"]
               }
             }
           }
         },
         "responses": {
-          "201": {
-            "description": "Returns the created user",
+          "200": {
+            "description": "Request successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -155,46 +252,725 @@
                     "success": {
                       "type": "boolean"
                     },
-                    "user": {
+                    "data": {
                       "type": "object",
                       "properties": {
+                        "id": {
+                          "type": "number",
+                          "description": "The unique identifier of the user",
+                          "example": 1
+                        },
                         "name": {
-                          "type": "string"
+                          "type": "string",
+                          "description": "The name of the user",
+                          "example": "John Doe"
                         },
                         "age": {
-                          "type": "integer",
-                          "minimum": -9007199254740991,
-                          "maximum": 9007199254740991
+                          "type": "number",
+                          "description": "The age of the user",
+                          "example": 30
                         },
                         "email": {
-                          "type": "string"
-                        },
+                          "type": "string",
+                          "description": "The email of the user",
+                          "example": "user@example.com"
+                        }
+                      },
+                      "required": ["id", "name", "age", "email"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
                         "id": {
-                          "type": "integer",
-                          "minimum": -9007199254740991,
-                          "maximum": 9007199254740991
+                          "type": "number",
+                          "description": "The unique identifier of the user",
+                          "example": 1
                         },
-                        "createdAt": {
-                          "type": "string"
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the user",
+                          "example": "John Doe"
                         },
-                        "updatedAt": {
+                        "age": {
+                          "type": "number",
+                          "description": "The age of the user",
+                          "example": 30
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "The email of the user",
+                          "example": "user@example.com"
+                        }
+                      },
+                      "required": ["id", "name", "age", "email"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "name",
-                        "age",
-                        "email",
-                        "id",
-                        "createdAt",
-                        "updatedAt"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "user"
-                  ]
+                  "required": ["success", "error"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}": {
+      "get": {
+        "tags": ["Users"],
+        "summary": "Get a User by ID",
+        "operationId": "get_UserDetail",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "The resource identifier",
+              "example": 1
+            },
+            "required": true,
+            "description": "The resource identifier",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "description": "The unique identifier of the user",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the user",
+                          "example": "John Doe"
+                        },
+                        "age": {
+                          "type": "number",
+                          "description": "The age of the user",
+                          "example": 30
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "The email of the user",
+                          "example": "user@example.com"
+                        }
+                      },
+                      "required": ["id", "name", "age", "email"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "description": "The unique identifier of the user",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the user",
+                          "example": "John Doe"
+                        },
+                        "age": {
+                          "type": "number",
+                          "description": "The age of the user",
+                          "example": 30
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "The email of the user",
+                          "example": "user@example.com"
+                        }
+                      },
+                      "required": ["id", "name", "age", "email"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    }
+                  },
+                  "required": ["success", "error"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Users"],
+        "summary": "Update a User",
+        "operationId": "post_UserUpdate",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "The resource identifier",
+              "example": 1
+            },
+            "required": true,
+            "description": "The resource identifier",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the user",
+                    "example": "John Doe"
+                  },
+                  "age": {
+                    "type": "number",
+                    "description": "The age of the user",
+                    "example": 30
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "The email of the user",
+                    "example": "user@example.com"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "description": "The unique identifier of the user",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the user",
+                          "example": "John Doe"
+                        },
+                        "age": {
+                          "type": "number",
+                          "description": "The age of the user",
+                          "example": 30
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "The email of the user",
+                          "example": "user@example.com"
+                        }
+                      },
+                      "required": ["id", "name", "age", "email"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "number",
+                          "description": "The unique identifier of the user",
+                          "example": 1
+                        },
+                        "name": {
+                          "type": "string",
+                          "description": "The name of the user",
+                          "example": "John Doe"
+                        },
+                        "age": {
+                          "type": "number",
+                          "description": "The age of the user",
+                          "example": 30
+                        },
+                        "email": {
+                          "type": "string",
+                          "description": "The email of the user",
+                          "example": "user@example.com"
+                        }
+                      },
+                      "required": ["id", "name", "age", "email"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    }
+                  },
+                  "required": ["success", "error"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{id}/delete": {
+      "post": {
+        "tags": ["Users"],
+        "summary": "Delete a User",
+        "operationId": "post_UserDelete",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "The resource identifier",
+              "example": 1
+            },
+            "required": true,
+            "description": "The resource identifier",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "description": "The resource identifier",
+                          "example": 1
+                        }
+                      },
+                      "required": ["id"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "description": "The resource identifier",
+                          "example": 1
+                        }
+                      },
+                      "required": ["id"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    }
+                  },
+                  "required": ["success", "error"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/users/{userId}/todos": {
+      "get": {
+        "tags": ["Todos"],
+        "summary": "List Todos by User ID",
+        "operationId": "get_UserTodoList",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "The user identifier",
+              "example": 1
+            },
+            "required": true,
+            "description": "The user identifier",
+            "name": "userId",
+            "in": "path"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "default": 0,
+              "description": "Page number"
+            },
+            "required": false,
+            "description": "Page number",
+            "name": "page",
+            "in": "query"
+          },
+          {
+            "schema": {
+              "type": "number",
+              "default": 10,
+              "description": "Number of items per page"
+            },
+            "required": false,
+            "description": "Number of items per page",
+            "name": "pageSize",
+            "in": "query"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Query successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "completed": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "description": {
+                            "type": ["string", "null"]
+                          },
+                          "scheduleAt": {
+                            "type": ["string", "null"]
+                          },
+                          "completedAt": {
+                            "type": ["string", "null"]
+                          },
+                          "id": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "completed",
+                          "description",
+                          "scheduleAt",
+                          "completedAt",
+                          "id"
+                        ]
+                      }
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "completed": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "description": {
+                            "type": ["string", "null"]
+                          },
+                          "scheduleAt": {
+                            "type": ["string", "null"]
+                          },
+                          "completedAt": {
+                            "type": ["string", "null"]
+                          },
+                          "id": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "completed",
+                          "description",
+                          "scheduleAt",
+                          "completedAt",
+                          "id"
+                        ]
+                      }
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "stack": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -204,9 +980,7 @@
     },
     "/api/todos": {
       "get": {
-        "tags": [
-          "Todos"
-        ],
+        "tags": ["Todos"],
         "summary": "List Todos",
         "operationId": "get_TodoList",
         "parameters": [
@@ -235,7 +1009,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Returns a list of todos",
+            "description": "Query successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -252,28 +1026,19 @@
                           "title": {
                             "type": "string"
                           },
-                          "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "scheduleAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
                           "completed": {
                             "type": "integer",
                             "minimum": -9007199254740991,
                             "maximum": 9007199254740991
                           },
+                          "description": {
+                            "type": ["string", "null"]
+                          },
+                          "scheduleAt": {
+                            "type": ["string", "null"]
+                          },
                           "completedAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "id": {
                             "type": "integer",
@@ -283,19 +1048,831 @@
                         },
                         "required": [
                           "title",
+                          "completed",
                           "description",
                           "scheduleAt",
-                          "completed",
                           "completedAt",
                           "id"
                         ]
                       }
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "completed": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "description": {
+                            "type": ["string", "null"]
+                          },
+                          "scheduleAt": {
+                            "type": ["string", "null"]
+                          },
+                          "completedAt": {
+                            "type": ["string", "null"]
+                          },
+                          "id": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "completed",
+                          "description",
+                          "scheduleAt",
+                          "completedAt",
+                          "id"
+                        ]
+                      }
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "stack": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Todos"],
+        "summary": "Create a new Todo",
+        "operationId": "post_TodoCreate",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "The title of the todo"
+                  },
+                  "userId": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "The ID of the user"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "description": "The description of the todo"
+                  }
+                },
+                "required": ["title", "userId"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Query successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "completed": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "description": {
+                            "type": ["string", "null"]
+                          },
+                          "scheduleAt": {
+                            "type": ["string", "null"]
+                          },
+                          "completedAt": {
+                            "type": ["string", "null"]
+                          },
+                          "id": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "completed",
+                          "description",
+                          "scheduleAt",
+                          "completedAt",
+                          "id"
+                        ]
+                      }
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "title": {
+                            "type": "string"
+                          },
+                          "completed": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          },
+                          "description": {
+                            "type": ["string", "null"]
+                          },
+                          "scheduleAt": {
+                            "type": ["string", "null"]
+                          },
+                          "completedAt": {
+                            "type": ["string", "null"]
+                          },
+                          "id": {
+                            "type": "integer",
+                            "minimum": -9007199254740991,
+                            "maximum": 9007199254740991
+                          }
+                        },
+                        "required": [
+                          "title",
+                          "completed",
+                          "description",
+                          "scheduleAt",
+                          "completedAt",
+                          "id"
+                        ]
+                      }
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "message": {
+                      "type": "string"
+                    },
+                    "stack": {
+                      "type": "string"
+                    }
+                  },
+                  "required": ["success", "message"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todos/{id}": {
+      "get": {
+        "tags": ["Todos"],
+        "summary": "Get a Todo by ID",
+        "operationId": "get_TodoDetail",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "The resource identifier",
+              "example": 1
+            },
+            "required": true,
+            "description": "The resource identifier",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "completed": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "userId": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "description": {
+                          "type": ["string", "null"]
+                        },
+                        "scheduleAt": {
+                          "type": ["string", "null"]
+                        },
+                        "completedAt": {
+                          "type": ["string", "null"]
+                        },
+                        "id": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "completed",
+                        "userId",
+                        "description",
+                        "scheduleAt",
+                        "completedAt",
+                        "id"
+                      ]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "completed": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "userId": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "description": {
+                          "type": ["string", "null"]
+                        },
+                        "scheduleAt": {
+                          "type": ["string", "null"]
+                        },
+                        "completedAt": {
+                          "type": ["string", "null"]
+                        },
+                        "id": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "completed",
+                        "userId",
+                        "description",
+                        "scheduleAt",
+                        "completedAt",
+                        "id"
+                      ]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    }
+                  },
+                  "required": ["success", "error"]
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Todos"],
+        "summary": "Update a Todo",
+        "operationId": "post_TodoUpdate",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "The resource identifier",
+              "example": 1
+            },
+            "required": true,
+            "description": "The resource identifier",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "title": {
+                    "type": "string",
+                    "description": "The title of the todo"
+                  },
+                  "completed": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  },
+                  "userId": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991,
+                    "description": "The ID of the user"
+                  },
+                  "description": {
+                    "type": ["string", "null"],
+                    "description": "The description of the todo"
+                  },
+                  "scheduleAt": {
+                    "type": ["string", "null"]
+                  },
+                  "completedAt": {
+                    "type": ["string", "null"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "completed": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "userId": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "description": {
+                          "type": ["string", "null"]
+                        },
+                        "scheduleAt": {
+                          "type": ["string", "null"]
+                        },
+                        "completedAt": {
+                          "type": ["string", "null"]
+                        },
+                        "id": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "completed",
+                        "userId",
+                        "description",
+                        "scheduleAt",
+                        "completedAt",
+                        "id"
+                      ]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
+                        },
+                        "completed": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "userId": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "description": {
+                          "type": ["string", "null"]
+                        },
+                        "scheduleAt": {
+                          "type": ["string", "null"]
+                        },
+                        "completedAt": {
+                          "type": ["string", "null"]
+                        },
+                        "id": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "completed",
+                        "userId",
+                        "description",
+                        "scheduleAt",
+                        "completedAt",
+                        "id"
+                      ]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    }
+                  },
+                  "required": ["success", "error"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/todos/{id}/delete": {
+      "post": {
+        "tags": ["Todos"],
+        "summary": "Delete a Todo",
+        "operationId": "post_TodoDelete",
+        "parameters": [
+          {
+            "schema": {
+              "type": "integer",
+              "exclusiveMinimum": 0,
+              "description": "The resource identifier",
+              "example": 1
+            },
+            "required": true,
+            "description": "The resource identifier",
+            "name": "id",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Request successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "description": "The resource identifier",
+                          "example": 1
+                        }
+                      },
+                      "required": ["id"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "integer",
+                          "exclusiveMinimum": 0,
+                          "description": "The resource identifier",
+                          "example": 1
+                        }
+                      },
+                      "required": ["id"]
+                    }
+                  },
+                  "required": ["success", "data"]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": ["message"]
+                    }
+                  },
+                  "required": ["success", "error"]
                 }
               }
             }

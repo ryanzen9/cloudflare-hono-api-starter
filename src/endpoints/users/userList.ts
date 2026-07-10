@@ -1,9 +1,9 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { usersTable } from "../../db/schema";
+import { listUsers } from "../../db/queries";
 import { AppContext } from "../../types";
 import { createPageQuerySchema } from "../dto";
-import { ApiRes, ResponseBody } from "../rest";
+import { ApiRes, ResponseArrayBody } from "../rest";
 import { pageUserDto } from "./userDto";
 
 export class UserList extends OpenAPIRoute {
@@ -11,7 +11,7 @@ export class UserList extends OpenAPIRoute {
     tags: ["Users"],
     summary: "List Users",
     request: createPageQuerySchema(),
-    responses: ResponseBody(pageUserDto)
+    responses: ResponseArrayBody(pageUserDto)
   };
 
   async handle(c: AppContext) {
@@ -21,11 +21,7 @@ export class UserList extends OpenAPIRoute {
 
     const db = getDB(c.env);
 
-    const rows = await db
-      .select()
-      .from(usersTable)
-      .limit(pageSize)
-      .offset(page * pageSize);
+    const rows = await listUsers(db, page, pageSize);
 
     const parsedRows = rows.map((row) => pageUserDto.parse(row));
 

@@ -1,8 +1,9 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
+import { createUser } from "../../db/queries";
 import { usersTable } from "../../db/schema";
 import { AppContext } from "../../types";
-import { ApiRes, RequestBody, ResponseBody } from "../rest";
+import { ApiRes, RequestBody, ResponseObjectBody } from "../rest";
 import { insertUserDto, userDto } from "./userDto";
 import { insertUserSchema } from "./userSchema";
 
@@ -11,7 +12,7 @@ export class UserCreate extends OpenAPIRoute {
     tags: ["Users"],
     summary: "Create a new User",
     request: RequestBody(insertUserDto),
-    responses: ResponseBody(userDto)
+    responses: ResponseObjectBody(userDto)
   };
 
   async handle(c: AppContext) {
@@ -29,7 +30,7 @@ export class UserCreate extends OpenAPIRoute {
 
     const parsed = insertUserSchema.parse(insertData);
 
-    const result = await db.insert(usersTable).values(parsed).returning();
+    const result = await createUser(db, parsed);
 
     const responseData = userDto.parse(result[0]);
 
