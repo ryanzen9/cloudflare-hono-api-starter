@@ -89,6 +89,15 @@ The primary tech stack used in this codebase is:
 - Hono
 - Drizzle ORM
 
+---
+
+## Package Management
+
+- Use Bun as the sole package manager. The required version is pinned in `package.json` via the `packageManager` field.
+- Commit `bun.lock`; do not add npm, Yarn, or pnpm lockfiles.
+- Install dependencies with `bun install --frozen-lockfile` and run project scripts with `bun run <script>`.
+- Keep Node.js available because Wrangler and Chanfana use the Node.js toolchain during local development and deployment.
+
 ### References
 
 - **Web Framework**
