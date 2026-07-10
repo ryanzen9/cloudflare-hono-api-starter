@@ -1,5 +1,5 @@
-import { exports } from "cloudflare:workers";
 import { describe, expect, it } from "vitest";
+import { request, requestWithEnv } from "../../request";
 
 interface ApiSuccess<T> {
   success: true;
@@ -14,9 +14,6 @@ interface User {
 }
 
 const jsonHeaders = { "content-type": "application/json" };
-
-const request = (path: string, init?: RequestInit) =>
-  exports.default.fetch(new Request(`https://example.com${path}`, init));
 
 describe("User API", () => {
   it("creates, queries, updates, and deletes a user", async () => {
@@ -33,7 +30,9 @@ describe("User API", () => {
     expect(createResponse.status).toBe(201);
     const createdUser = (await createResponse.json()) as ApiSuccess<User>;
 
-    const detailResponse = await request(`/api/users/${createdUser.data.id}`);
+    const detailResponse = await requestWithEnv(
+      `/api/users/${createdUser.data.id}`
+    );
     expect(detailResponse.status).toBe(200);
     await expect(detailResponse.json()).resolves.toEqual({
       success: true,

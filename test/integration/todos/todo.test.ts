@@ -1,5 +1,5 @@
-import { exports } from "cloudflare:workers";
 import { describe, expect, it } from "vitest";
+import { request } from "../../request";
 
 interface ApiSuccess<T> {
   success: true;
@@ -21,9 +21,6 @@ interface Todo {
 }
 
 const jsonHeaders = { "content-type": "application/json" };
-
-const request = (path: string, init?: RequestInit) =>
-  exports.default.fetch(new Request(`https://example.com${path}`, init));
 
 describe("Todo API", () => {
   it("creates, queries, updates, and deletes a todo for a user", async () => {
