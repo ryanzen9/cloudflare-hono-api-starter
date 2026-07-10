@@ -11,8 +11,11 @@ import { UserDetail } from "./endpoints/users/userDetail";
 import { UserList } from "./endpoints/users/userList";
 import { UserTodoList } from "./endpoints/users/userTodoList";
 import { UserUpdate } from "./endpoints/users/userUpdate";
+import { ErrorHandler } from "./error-handler";
 
 const app = new Hono<{ Bindings: Env }>();
+
+app.onError(ErrorHandler);
 
 const openapi = fromHono(app, {
   docs_url: "/docs"

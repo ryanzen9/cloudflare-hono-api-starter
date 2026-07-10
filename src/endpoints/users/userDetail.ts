@@ -1,6 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
 import { UserQueries } from "../../db/queries";
+import { BizError } from "../../errors";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import { ApiRes, RequestParams, ResponseObjectBody } from "../rest";
@@ -18,9 +19,7 @@ export class UserDetail extends OpenAPIRoute {
     const data = await this.getValidatedData<typeof this.schema>();
     const user = await UserQueries.findById(getDB(c.env), data.params.id);
 
-    if (!user) {
-      return c.json(ApiRes.error("User not found"), 404);
-    }
+    BizError.throwNotFoundIf(!user, "User not found");
 
     return c.json(ApiRes.success(userDto.parse(user)), 200);
   }

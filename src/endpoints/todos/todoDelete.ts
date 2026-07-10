@@ -1,6 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
 import { TodoQueries } from "../../db/queries";
+import { BizError } from "../../errors";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import { ApiRes, RequestParams, ResponseObjectBody } from "../rest";
@@ -17,9 +18,7 @@ export class TodoDelete extends OpenAPIRoute {
     const data = await this.getValidatedData<typeof this.schema>();
     const result = await TodoQueries.deleteById(getDB(c.env), data.params.id);
 
-    if (!result[0]) {
-      return c.json(ApiRes.error("Todo not found"), 404);
-    }
+    BizError.throwNotFoundIf(!result[0], "Todo not found");
 
     return c.json(ApiRes.success(result[0]), 200);
   }
