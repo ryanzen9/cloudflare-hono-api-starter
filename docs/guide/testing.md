@@ -1,21 +1,33 @@
----
-title: "测试"
-date: 2026-07-10
-author: "Ryan Zeng"
-draft: false
----
+# 测试
 
 测试使用 `Cloudflare Workers` 和 `Vitest`。详情请参阅 Hono [Testing 章节](https://hono.dev/docs/guides/testing) 和 Cloudflare Workers 文档中的 Vitest [集成部分](https://developers.cloudflare.com/workers/testing/vitest-integration/)。
+
+## 运行测试
+
+```bash
+bun run test
+```
+
+开发时可用：
+
+```bash
+bun run test:watch
+```
+
+请勿使用 `bun test`，那会走 Bun 内置测试运行器，而不是本项目的 Vitest 配置。
 
 ## 测试用例的编写
 
 统一在 `/test/` 目录下编写测试用例，测试用例文件名以 `.test.ts` 结尾。
 
+- 无 Binding 的纯逻辑 / Hono 路由：`test/unit/`
+- 依赖 Worker 绑定、D1 或多组件 API：`test/integration/<resource>/`
+
 ## Unit 测试
 
 对于 **没有使用到 Cloudflare Bindings 的 Unit 测试**：
 
-`/test/unit/` 目录下的测试用例可以直接使用 `Vitest` 运行，使用 app.request() 方法来模拟请求。
+`/test/unit/` 目录下的测试用例可以直接使用 `Vitest` 运行，使用 `app.request()` 方法来模拟请求。
 
 ```typescript
 describe("Hono app", () => {
@@ -58,7 +70,7 @@ beforeAll(async () => {
 编辑 Vitest 配置文件。
 
 ```typescript
-// vite.config.ts
+// vitest.config.ts
 export default defineConfig({
   plugins: [
     cloudflareTest(async () => ({
@@ -115,3 +127,8 @@ describe("User API", () => {
   });
 });
 ```
+
+## 注意
+
+- 测试数据库通过 `TEST_MIGRATIONS` 在隔离环境中迁移，**不要**使用本地开发 D1 跑自动化测试。
+- 测试代码的类型检查使用 `test/tsconfig.json`。

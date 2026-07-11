@@ -78,8 +78,6 @@ Follow the principle of progressive disclosure when working with project instruc
   - `POST` for write operations.
 - Refer to `docs/openapi.json` for the current list of API endpoints.
 
----
-
 ## Tech Stack
 
 The primary tech stack used in this codebase is:
@@ -148,3 +146,17 @@ After completing any development task:
    - Investigate the issue.
    - Resolve the issue.
    - Do not report the task as completed until all validation steps pass.
+
+## Documentation Site (VitePress)
+
+- Human-readable docs are built with VitePress; source lives under `docs/`.
+- Config: `docs/.vitepress/config.ts`.
+- Commands:
+  - `bun run docs:dev` — local docs preview
+  - `bun run docs:build` — build static site to `docs/.vitepress/dist`
+  - `bun run docs:preview` — preview the production build
+  - `bun run docs` — still generates OpenAPI JSON via Chanfana (`docs/openapi.json`)
+- Do not publish `docs/.agents/` (agent-only notes). Exclude via VitePress `srcExclude`.
+- Worker Swagger remains at runtime path `/docs`; the VitePress site is separate (prefer Cloudflare Pages).
+
+---

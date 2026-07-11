@@ -24,6 +24,18 @@ This is an example project made to be used as a quick start into building OpenAP
 2. Open `http://localhost:8787/` in your browser to see the Swagger interface where you can try the endpoints.
 3. Changes made in the `src/` folder will automatically trigger the server to reload, you only need to refresh the Swagger interface.
 
+## Documentation site (VitePress)
+
+Human-readable docs live under `docs/` and are built with VitePress (separate from the Worker Swagger UI at `/docs`).
+
+```bash
+bun run docs:dev      # local preview
+bun run docs:build    # static output → docs/.vitepress/dist
+bun run docs:preview  # preview the production build
+```
+
+See `docs/guide/deployment.md` for Cloudflare Pages deployment notes.
+
 ## Testing
 
 Run the Cloudflare Workers integration tests with:
