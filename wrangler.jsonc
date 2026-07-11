@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "cloudflare-example",
+  "name": "cloudflare-hono-api-starter",
   "main": "src/index.ts",
   "compatibility_date": "2026-05-25",
   "observability": {
@@ -12,6 +12,9 @@
   },
   "upload_source_maps": true,
   "compatibility_flags": ["nodejs_compat"],
+  "secrets": {
+    "required": ["JWT_SECRET"]
+  },
   "d1_databases": [
     {
       "binding": "DB",
