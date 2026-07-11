@@ -13,7 +13,7 @@
   "upload_source_maps": true,
   "compatibility_flags": ["nodejs_compat"],
   "secrets": {
-    "required": ["SWAGGER_ACCESS_TOKEN", "JWT_SECRET"]
+    "required": ["JWT_SECRET"]
   },
   "d1_databases": [
     {

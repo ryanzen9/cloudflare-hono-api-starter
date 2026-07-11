@@ -6,10 +6,3 @@ export const idParamDto = z.object({
     example: 1
   })
 });
-
-export const userIdParamDto = z.object({
-  userId: z.coerce.number().int().positive().openapi({
-    description: "The user identifier",
-    example: 1
-  })
-});

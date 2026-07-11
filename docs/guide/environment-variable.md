@@ -1,3 +1,12 @@
+---
+title: "环境变量"
+date: 2026-07-11
+author: "Ryan Zeng"
+tags: []
+categories: []
+draft: false
+---
+
 # 环境变量
 
 ## 运行时
@@ -10,7 +19,7 @@
 
 ```diff
 +  "secrets": {
-+    "required": ["SWAGGER_ACCESS_TOKEN", "JWT_SECRET"]
++    "required": ["JWT_SECRET"]
 +  },
 ```
 
@@ -21,7 +30,6 @@ bun run cf-typegen
 创建 `.dev.vars` 文件，添加环境变量：
 
 ```bash
-SWAGGER_ACCESS_TOKEN=your_swagger_access_token
 JWT_SECRET=your_jwt_secret
 ```
 
@@ -59,7 +67,6 @@ Using secrets defined in .dev.vars
 Your Worker has access to the following bindings:
 Binding                                         Resource                  Mode
 env.DB (drizzle_example)                        D1 Database               local
-env.SWAGGER_ACCESS_TOKEN ("(hidden)")           Environment Variable      local
 env.JWT_SECRET ("(hidden)")                     Environment Variable      local
 
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮

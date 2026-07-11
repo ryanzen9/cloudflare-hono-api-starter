@@ -25,6 +25,7 @@ export default defineConfig({
             { text: "快速开始", link: "/guide/getting-started" },
             { text: "项目结构", link: "/guide/project-structure" },
             { text: "本地开发", link: "/guide/development" },
+            { text: "认证", link: "/guide/authentication" },
             { text: "测试", link: "/guide/testing" },
             { text: "部署", link: "/guide/deployment" },
             { text: "环境变量", link: "/guide/environment-variable" },

@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { request } from "../../request";
+import { jsonHeaders, login, request } from "../../request";
 
 interface ApiSuccess<T> {
   success: true;
@@ -20,13 +20,22 @@ interface Todo {
   completedAt: string | null;
 }
 
-const jsonHeaders = { "content-type": "application/json" };
+describe("Todo API", async () => {
+  const loginResponse = await login();
+  expect(loginResponse.status).toBe(201);
+  const loginData: ApiSuccess<{ token: string }> = await loginResponse.json();
+  expect(loginData.success).toBe(true);
+  const headers = {
+    ...jsonHeaders,
+    Authorization: `Bearer ${loginData.data.token}`
+  };
 
-describe("Todo API", () => {
   it("creates, queries, updates, and deletes a todo for a user", async () => {
+    // Get Current User's AccessTokens
+
     const createUserResponse = await request("/api/users", {
       method: "POST",
-      headers: jsonHeaders,
+      headers: headers,
       body: JSON.stringify({
         name: "Todo Test User",
         age: 30,
@@ -37,7 +46,7 @@ describe("Todo API", () => {
 
     const createTodoResponse = await request("/api/todos", {
       method: "POST",
-      headers: jsonHeaders,
+      headers: headers,
       body: JSON.stringify({
         title: "Test todo",
         description: "Created by a Worker test",
@@ -54,14 +63,16 @@ describe("Todo API", () => {
       throw new Error("Todo creation did not return a todo");
     }
 
-    const detailResponse = await request(`/api/todos/${createdTodo.id}`);
+    const detailResponse = await request(`/api/todos/${createdTodo.id}`, {
+      headers: headers
+    });
     expect(detailResponse.status).toBe(200);
     const detailedTodo = (await detailResponse.json()) as ApiSuccess<Todo>;
     expect(detailedTodo.data.userId).toBe(createdUser.data.id);
 
-    const userTodosResponse = await request(
-      `/api/users/${createdUser.data.id}/todos`
-    );
+    const userTodosResponse = await request(`/api/users/todos`, {
+      headers: headers
+    });
     expect(userTodosResponse.status).toBe(200);
     const userTodos = (await userTodosResponse.json()) as ApiSuccess<Todo[]>;
     expect(userTodos.data).toHaveLength(1);
@@ -69,7 +80,7 @@ describe("Todo API", () => {
 
     const updateTodoResponse = await request(`/api/todos/${createdTodo.id}`, {
       method: "POST",
-      headers: jsonHeaders,
+      headers: headers,
       body: JSON.stringify({
         completed: 1,
         completedAt: "2026-07-10T00:00:00.000Z"
@@ -80,16 +91,18 @@ describe("Todo API", () => {
 
     const deleteTodoResponse = await request(
       `/api/todos/${createdTodo.id}/delete`,
-      { method: "POST" }
+      { method: "POST", headers: headers }
     );
     expect(deleteTodoResponse.status).toBe(200);
 
-    const deletedTodoResponse = await request(`/api/todos/${createdTodo.id}`);
+    const deletedTodoResponse = await request(`/api/todos/${createdTodo.id}`, {
+      headers: headers
+    });
     expect(deletedTodoResponse.status).toBe(404);
 
     const deleteUserResponse = await request(
       `/api/users/${createdUser.data.id}/delete`,
-      { method: "POST" }
+      { method: "POST", headers: headers }
     );
     expect(deleteUserResponse.status).toBe(200);
   });

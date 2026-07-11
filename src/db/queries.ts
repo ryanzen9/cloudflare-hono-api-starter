@@ -4,6 +4,26 @@ import { todosTable, usersTable } from "./schema";
 
 type Database = ReturnType<typeof getDB>;
 
+/** 认证相关的数据访问操作。 */
+export class AuthQueries {
+  /**
+   * 登录
+   * @param username 用户名。
+   * @param password 密码。
+   * @returns 匹配的用户记录；认证失败时返回 null。
+   */
+  static login(db: Database, username: string, password: string) {
+    // Example
+    if (username === "admin" && password === "password") {
+      return Promise.resolve({
+        id: 1,
+        username: "admin"
+      });
+    }
+    return Promise.resolve(null);
+  }
+}
+
 /** 用户表的数据访问操作。 */
 export class UserQueries {
   /**
