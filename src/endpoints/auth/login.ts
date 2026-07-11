@@ -3,7 +3,7 @@ import { getDB } from "../../db/dao";
 import { AuthQueries } from "../../db/queries";
 
 import { z } from "zod";
-import { BizError } from "../../errors";
+import { Assert } from "../../assert";
 import { JwtPayload, jwtSign } from "../../libs/auth/jwt";
 import { AppContext } from "../../types";
 import { ApiRes, RequestBody, ResponseObjectBody } from "../rest";
@@ -36,7 +36,7 @@ export class Login extends OpenAPIRoute {
 
     const user = await AuthQueries.login(db, username, password);
 
-    BizError.throwUnauthorizedIf(!user);
+    Assert.throwUnauthorizedIf(!user);
 
     const jwtSecret = c.env.JWT_SECRET;
 

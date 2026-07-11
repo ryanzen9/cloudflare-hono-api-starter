@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
+import { Assert } from "../../assert";
 import { getDB } from "../../db/dao";
 import { TodoQueries } from "../../db/queries";
-import { BizError } from "../../errors";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import {
@@ -36,7 +36,7 @@ export class TodoUpdate extends OpenAPIRoute {
       todoData
     );
 
-    BizError.throwNotFoundIf(!result[0], "Todo not found");
+    Assert.throwNotFoundIf(!result[0], "Todo not found");
 
     return c.json(ApiRes.success(todoDto.parse(result[0])), 200);
   }

@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
+import { Assert } from "../../assert";
 import { getDB } from "../../db/dao";
 import { TodoQueries } from "../../db/queries";
-import { BizError } from "../../errors";
 import { JwtPayload } from "../../libs/auth/jwt";
 import { AppContext } from "../../types";
 import { createPageQuerySchema } from "../dto";
@@ -21,14 +21,14 @@ export class UserTodoList extends OpenAPIRoute {
 
     const jwtPayload = c.get("jwtPayload") as JwtPayload;
 
-    BizError.throwUnauthorizedIf(
+    Assert.throwUnauthorizedIf(
       !jwtPayload,
       "Unauthorized: JWT payload not found"
     );
 
     const userId = jwtPayload.data.userId;
 
-    BizError.throwUnauthorizedIf(
+    Assert.throwUnauthorizedIf(
       !userId,
       "Unauthorized: User ID not found in JWT payload"
     );
