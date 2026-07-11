@@ -1,0 +1,60 @@
+import { defineConfig } from "vitepress";
+
+export default defineConfig({
+  title: "Cloudflare Hono API Starter",
+  description: "Cloudflare-hono-api-starter 文档",
+  lang: "zh-CN",
+  cleanUrls: true,
+  srcExclude: ["**/openapi.json", "**/.agents/**"],
+  ignoreDeadLinks: true,
+  themeConfig: {
+    nav: [
+      {text: "首页", link: "/"},
+      { text: "指南", link: "/guide/getting-started" },
+      { text: "API 参考", link: "/api/overview" },
+      {
+        text: "Swagger",
+        link: "https://api.ryanzeng.xyz/docs",
+      },
+    ],
+    sidebar: {
+      "/guide/": [
+        {
+          text: "指南",
+          items: [
+            { text: "快速开始", link: "/guide/getting-started" },
+            { text: "项目结构", link: "/guide/project-structure" },
+            { text: "本地开发", link: "/guide/development" },
+            { text: "测试", link: "/guide/testing" },
+            { text: "部署", link: "/guide/deployment" },
+          ],
+        },
+      ],
+      "/api/": [
+        {
+          text: "API",
+          items: [{ text: "概览", link: "/api/overview" }],
+        },
+      ],
+    },
+    socialLinks: [
+      {
+        icon: "github",
+        link: "https://github.com/ryanzen9/cloudflare-hono-api-starter",
+      },
+    ],
+    search: {
+      provider: "local",
+    },
+    outline: {
+      label: "本页目录",
+    },
+    docFooter: {
+      prev: "上一页",
+      next: "下一页",
+    },
+    returnToTopLabel: "回到顶部",
+    sidebarMenuLabel: "菜单",
+    darkModeSwitchLabel: "主题",
+  },
+});
