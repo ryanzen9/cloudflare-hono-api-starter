@@ -27,6 +27,7 @@ export default defineConfig({
             { text: "本地开发", link: "/guide/development" },
             { text: "测试", link: "/guide/testing" },
             { text: "部署", link: "/guide/deployment" },
+            { text: "环境变量", link: "/guide/environment-variable" },
           ],
         },
       ],
