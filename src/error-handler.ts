@@ -16,7 +16,7 @@ export const ErrorHandler = () => (err: Error, c: AppContext) => {
       return c.json(ApiRes.error(err.message), 400);
     }
     if (err.status === 500) {
-      console.error(`400 Error: ${err.message}`);
+      console.error(`500 Error: ${err.message}`);
       console.error(`Stack Trace: ${err.stack}`);
       return c.json(ApiRes.error(err.message, err.stack), 500);
     }
@@ -24,7 +24,7 @@ export const ErrorHandler = () => (err: Error, c: AppContext) => {
     return err.getResponse();
   }
 
-  console.error(`400 Error: ${err.message}`);
+  console.error(`500 Error: ${err.message}`);
   console.error(`Stack Trace: ${err.stack}`);
   return c.json(ApiRes.error(err.message, err.stack), 500);
 };
