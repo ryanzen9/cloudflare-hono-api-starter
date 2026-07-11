@@ -4,7 +4,7 @@
  */
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "cloudflare-hono-api-starter",
+  "name": "cloudflare-example",
   "main": "src/index.ts",
   "compatibility_date": "2026-05-25",
   "observability": {
