@@ -41,13 +41,13 @@ bun run docs
 - `GET /api/users`：获取用户列表
 - `POST /api/users`：创建新用户
 - `GET /api/users/:id`：获取指定用户
-- `PUT /api/users/:id`：更新指定用户
-- `DELETE /api/users/:id`：删除指定用户
+- `POST /api/users/:id`：更新指定用户
+- `POST /api/users/:id/delete`：删除指定用户
 
 ### 待办事项
 
 - `GET /api/todos`：获取待办事项列表
 - `POST /api/todos`：创建新待办事项
 - `GET /api/todos/:id`：获取指定待办事项
-- `PUT /api/todos/:id`：更新指定待办事项
-- `DELETE /api/todos/:id`：删除指定待办事项
+- `POST /api/todos/:id`：更新指定待办事项
+- `POST /api/todos/:id/delete`：删除指定待办事项
