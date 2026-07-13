@@ -34,6 +34,7 @@ bun run test:watch
 - 不依赖 Worker Binding 的 Hono 路由或纯逻辑测试：`test/unit/`
 - 依赖 Worker Binding、D1 或完整 API 流程的测试：`test/integration/<resource>/`
 - 公共请求辅助方法：`test/request.ts`
+- 随机测试数据辅助方法：`test/utils.ts`
 - 测试环境初始化：`test/setup.ts`
 
 测试代码使用 `test/tsconfig.json` 进行类型检查。
@@ -162,7 +163,11 @@ beforeAll(async () => {
 });
 ```
 
+依赖 D1 的注册、登录和资源准备必须放在集成测试的 `beforeAll()` 或具体测试用例中，不要在 `describe()` 的测试收集阶段发送请求。这样可以保证 `test/setup.ts` 注册的迁移钩子先完成数据库初始化。
+
 不要使用本地开发 D1 数据库运行自动化测试。
+
+当前认证数据存储在 D1 的 `auth_table`。隔离测试数据库不会预置固定账号，因此每个集成测试组需要先注册随机用户，再使用相同凭据登录。
 
 ## 请求辅助方法
 
@@ -170,7 +175,9 @@ beforeAll(async () => {
 
 - `request()`：通过 `exports.default.fetch()` 请求完整 Worker，不自动添加认证信息
 - `requestWithEnv()`：直接调用生产 Hono 应用的 `request()`，并传入 `DB`、`JWT_SECRET`
-- `login()`：使用测试账号登录并返回登录响应
+- `genInitUser()`：生成包含随机用户名、密码和邮箱的注册数据
+- `registerUser()`：调用 `/api/register` 注册测试用户
+- `login(user)`：使用传入的用户名和密码调用 `/api/login`
 - `jsonHeaders`：通用 JSON 请求头
 
 普通请求通过合法 URL 构造 `Request`，再交给 Worker 默认导出处理：
@@ -178,6 +185,18 @@ beforeAll(async () => {
 ```typescript
 export const request = (path: string, init?: RequestInit) =>
   exports.default.fetch(new Request(`https://example.com${path}`, init));
+```
+
+随机注册数据由 `test/utils.ts` 生成，避免不同测试组之间出现用户名或邮箱冲突：
+
+```typescript
+export const genInitUser = () => ({
+  username: randomUsername(),
+  password: randomPassword(),
+  name: "Random User",
+  age: 30,
+  email: randomEmail(),
+});
 ```
 
 `requestWithEnv()` 复用 `src/index.ts` 默认导出的生产 Hono 应用，因此测试和 Worker 入口使用同一套路由声明；它不会调用 Worker 默认导出的 `fetch()`：
@@ -196,33 +215,70 @@ export const requestWithEnv = (path: string, init?: RequestInit) =>
 
 ## 集成测试
 
-当前 User 和 Todo 集成测试会在测试组开始时调用 `login()`，取得 JWT 后为后续请求统一构造 `Authorization` 请求头：
+当前 User 和 Todo 集成测试通过以下顺序准备认证环境：
+
+1. 使用 `genInitUser()` 生成随机注册数据。
+2. 调用 `registerUser()`，确认注册接口返回 `201`。
+3. 使用相同凭据调用 `login()`，确认登录接口返回 `201`。
+4. 从登录响应中取得 JWT，为后续请求构造 `Authorization` 请求头。
+
+这些异步操作放在测试组的 `beforeAll()` 中，确保 D1 迁移已经应用，并让同组测试复用同一个认证上下文：
 
 ```typescript
-describe("User API", async () => {
-  const loginResponse = await login();
+let headers: Record<string, string>;
+
+beforeAll(async () => {
+  const user = genInitUser();
+
+  const registerResponse = await registerUser(user);
+  expect(registerResponse.status).toBe(201);
+
+  const loginResponse = await login(user);
   expect(loginResponse.status).toBe(201);
 
   const loginData: ApiSuccess<{ token: string }> = await loginResponse.json();
-  expect(loginData.success).toBe(true);
 
-  const headers = {
+  headers = {
     ...jsonHeaders,
     Authorization: `Bearer ${loginData.data.token}`,
   };
+});
+```
 
-  it("creates, queries, updates, and deletes a user", async () => {
-    const createResponse = await request("/api/users", {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        name: "Test User",
-        age: 30,
-        email: "test-user@example.com",
-      }),
-    });
+User 集成测试随后使用该请求头验证创建、详情、更新和删除流程。Todo 集成测试还会保存登录响应中的 `userId`，并使用该 ID 创建 Todo：
 
-    expect(createResponse.status).toBe(201);
-  });
+```typescript
+let userId: number;
+
+beforeAll(async () => {
+  const user = genInitUser();
+
+  const registerResponse = await registerUser(user);
+  expect(registerResponse.status).toBe(201);
+
+  const loginResponse = await login(user);
+  expect(loginResponse.status).toBe(201);
+
+  const loginData: ApiSuccess<{
+    userId: number;
+    username: string;
+    token: string;
+  }> = await loginResponse.json();
+
+  userId = loginData.data.userId;
+  headers = {
+    ...jsonHeaders,
+    Authorization: `Bearer ${loginData.data.token}`,
+  };
+});
+
+const createTodoResponse = await request("/api/todos", {
+  method: "POST",
+  headers,
+  body: JSON.stringify({
+    title: "Test todo",
+    description: "Created by a Worker test",
+    userId,
+  }),
 });
 ```

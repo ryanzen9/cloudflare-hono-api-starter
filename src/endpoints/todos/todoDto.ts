@@ -7,7 +7,8 @@ export const createTodoDto = insertTodoSchema.omit({
   completedAt: true,
   scheduleAt: true,
   createdAt: true,
-  updatedAt: true
+  updatedAt: true,
+  userId: true
 });
 
 export const pageTodoDto = createSelectSchema(todosTable).omit({

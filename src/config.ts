@@ -16,7 +16,7 @@ export const config = (app: Hono<AppEnv>) => {
   app.use(
     "/api/*",
     JWTAuthMiddleware({
-      ignorePath: ["/api/health", "/api/login"]
+      ignorePath: ["/api/health", "/api/login", "/api/register"]
     })
   );
 };

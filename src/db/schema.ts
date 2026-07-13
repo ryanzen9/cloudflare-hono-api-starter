@@ -14,12 +14,28 @@ export const usersTable = sqliteTable("users_table", {
   ...AuditColumns
 });
 
+export const authTable = sqliteTable("auth_table", {
+  userId: int()
+    .notNull()
+    .references(() => usersTable.id, {
+      onUpdate: "cascade",
+      onDelete: "cascade"
+    }),
+  username: text().notNull().unique(),
+  password: text().notNull(),
+
+  ...AuditColumns
+});
+
 export const todosTable = sqliteTable("todos_table", {
   title: text().notNull(),
   completed: int().notNull(),
   userId: int()
     .notNull()
-    .references(() => usersTable.id),
+    .references(() => usersTable.id, {
+      onUpdate: "cascade",
+      onDelete: "cascade"
+    }),
 
   description: text(),
   scheduleAt: text(),

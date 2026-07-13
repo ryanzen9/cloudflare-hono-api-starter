@@ -1,26 +1,97 @@
-import { eq } from "drizzle-orm";
+import { eq, sql } from "drizzle-orm";
+import { Assert } from "../libs/error";
+import { hashPassword, verifyPassword } from "../libs/utils";
 import { getDB } from "./dao";
-import { todosTable, usersTable } from "./schema";
+import { authTable, todosTable, usersTable } from "./schema";
 
-type Database = ReturnType<typeof getDB>;
+// D1 环境下不支持开启 Begin Commit 等事务操作，因此这里不导出 transaction 方法。
+// 可以通过使用批量语句 `batch` 进行原子操作。
+type Database = Omit<ReturnType<typeof getDB>, "transaction">;
 
 /** 认证相关的数据访问操作。 */
 export class AuthQueries {
+  /**
+   * 注册
+   * @param data 用户信息。
+   * @returns 新创建的用户记录数组。
+   */
+  static async registerAccount(
+    db: Database,
+    data: {
+      username: string;
+      password: string;
+      name: string;
+      age: number;
+      email: string;
+    }
+  ) {
+    const hashedPassword = await hashPassword(data.password);
+
+    const now = new Date().toISOString();
+
+    const exists = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, data.email))
+      .get();
+
+    Assert.throwBadRequestIf(!!exists, "Email already exists");
+
+    const [users, authRows] = await db.batch([
+      db
+        .insert(usersTable)
+        .values({
+          name: data.name,
+          age: data.age,
+          email: data.email,
+          createdAt: now,
+          updatedAt: now
+        })
+        .returning(),
+
+      db
+        .insert(authTable)
+        .values({
+          userId: sql<number>`(
+          SELECT ${usersTable.id}
+          FROM ${usersTable}
+          WHERE ${usersTable.email} = ${data.email}
+          LIMIT 1
+        )`,
+          username: data.username,
+          password: hashedPassword,
+          createdAt: now,
+          updatedAt: now
+        })
+        .returning()
+    ]);
+
+    return {
+      user: users[0],
+      auth: authRows[0]
+    };
+  }
+
   /**
    * 登录
    * @param username 用户名。
    * @param password 密码。
    * @returns 匹配的用户记录；认证失败时返回 null。
    */
-  static login(db: Database, username: string, password: string) {
-    // Example
-    if (username === "admin" && password === "password") {
-      return Promise.resolve({
-        id: 1,
-        username: "admin"
-      });
+  static async login(db: Database, username: string, password: string) {
+    const row = await db
+      .select()
+      .from(authTable)
+      .where(eq(authTable.username, username))
+      .get();
+    if (!row) {
+      return null;
     }
-    return Promise.resolve(null);
+    const isPasswordValid = await verifyPassword(row.password, password);
+    if (!isPasswordValid) {
+      return null;
+    }
+    return row;
   }
 }
 
@@ -54,7 +125,15 @@ export class UserQueries {
    * @param user 待写入的用户数据。
    * @returns 新创建的用户记录数组。
    */
-  static create(db: Database, user: typeof usersTable.$inferInsert) {
+  static async create(db: Database, user: typeof usersTable.$inferInsert) {
+    const exists = await db
+      .select()
+      .from(usersTable)
+      .where(eq(usersTable.email, user.email))
+      .get();
+
+    Assert.throwBadRequestIf(!!exists, "Email already exists");
+
     return db.insert(usersTable).values(user).returning();
   }
 

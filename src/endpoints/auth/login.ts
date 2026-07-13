@@ -1,6 +1,6 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
-import { AuthQueries } from "../../db/queries";
+import { AuthQueries, UserQueries } from "../../db/queries";
 
 import { z } from "zod";
 import { JwtPayload, jwtSign } from "../../libs/auth/jwt";
@@ -34,19 +34,24 @@ export class Login extends OpenAPIRoute {
 
     const db = getDB(c.env);
 
-    const user = await AuthQueries.login(db, username, password);
+    const auth = await AuthQueries.login(db, username, password);
 
-    Assert.throwUnauthorizedIf(!user);
+    Assert.throwUnauthorizedIf(!auth);
+
+    const userId = auth!.userId;
+    const user = await UserQueries.findById(db, userId);
+
+    Assert.throwBadRequestIf(!user, "User not found");
 
     const jwtSecret = c.env.JWT_SECRET;
 
     const payload: JwtPayload = {
-      sub: user!.id.toString(),
+      sub: auth!.id.toString(),
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
       data: {
-        userId: user!.id.toString(),
-        username: user!.username
+        userId: user!.id,
+        username: auth!.username
       }
     };
 
@@ -55,7 +60,7 @@ export class Login extends OpenAPIRoute {
     const result = loginResDto.parse({
       token,
       userId: user!.id,
-      username: user!.username
+      username: auth!.username
     });
 
     return c.json(ApiRes.success(result), 201);

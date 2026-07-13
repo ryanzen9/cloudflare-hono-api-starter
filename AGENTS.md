@@ -79,6 +79,15 @@ Follow the principle of progressive disclosure when working with project instruc
   - `POST` for write operations.
 - Refer to `docs/openapi.json` for the current list of API endpoints.
 
+## Authentication
+
+- Hash passwords through `hashPassword()` in `src/libs/utils/index.ts`; verify
+  them through `verifyPassword()`.
+- Store passwords as PBKDF2-HMAC-SHA256 values with 600,000 iterations, a
+  per-password 16-byte random salt, and a 32-byte derived key.
+- Never store plaintext passwords or use a fast, unsalted digest such as a
+  single SHA-256 hash for password storage.
+
 ## Tech Stack
 
 The primary tech stack used in this codebase is:
