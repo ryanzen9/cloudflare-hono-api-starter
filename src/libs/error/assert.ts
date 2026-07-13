@@ -5,7 +5,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
   UnauthorizedException
-} from "./errors";
+} from "../../libs/error";
 
 export class Assert {
   static throw(

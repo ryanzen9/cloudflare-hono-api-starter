@@ -3,8 +3,8 @@ import { getDB } from "../../db/dao";
 import { AuthQueries } from "../../db/queries";
 
 import { z } from "zod";
-import { Assert } from "../../assert";
 import { JwtPayload, jwtSign } from "../../libs/auth/jwt";
+import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { ApiRes, RequestBody, ResponseObjectBody } from "../rest";
 

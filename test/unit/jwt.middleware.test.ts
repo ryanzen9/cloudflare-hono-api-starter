@@ -1,7 +1,7 @@
 import { sign } from "hono/jwt";
 import { describe, expect, it } from "vitest";
 import { createAppFromFactory } from "../../src/app";
-import { JWTAuthMiddleware } from "../../src/libs/auth";
+import { JWTAuthMiddleware } from "../../src/libs/auth/middlewares";
 
 const JWT_SECRET = "test-jwt-secret";
 

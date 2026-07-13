@@ -1,7 +1,7 @@
 import type { Hono } from "hono";
 import { logger } from "hono/logger";
-import { ErrorHandler } from "./error-handler";
-import { JWTAuthMiddleware } from "./libs/auth";
+import { JWTAuthMiddleware } from "./libs/auth/middlewares";
+import { ErrorHandler } from "./libs/error";
 import { AppEnv } from "./types";
 
 export const config = (app: Hono<AppEnv>) => {

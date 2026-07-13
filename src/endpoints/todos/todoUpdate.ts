@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
-import { Assert } from "../../assert";
 import { getDB } from "../../db/dao";
 import { TodoQueries } from "../../db/queries";
+import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import {
