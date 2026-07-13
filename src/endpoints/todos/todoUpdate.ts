@@ -26,6 +26,14 @@ export class TodoUpdate extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
+    const db = getDB(c.env);
+    const userId = c.get("jwtPayload")?.data.userId;
+    Assert.throwUnauthorizedIf(!userId, "Unauthorized");
+
+    const todo = await TodoQueries.findById(db, data.params.id);
+
+    Assert.throwUnauthorizedIf(todo?.userId !== userId, "Unauthorized");
+
     const todoData = updateTodoSchema.parse({
       ...data.body,
       updatedAt: new Date().toISOString()

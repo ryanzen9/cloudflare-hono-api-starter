@@ -29,13 +29,21 @@ export class AuthQueries {
 
     const now = new Date().toISOString();
 
-    const exists = await db
+    const existsEmail = await db
       .select()
       .from(usersTable)
       .where(eq(usersTable.email, data.email))
       .get();
 
-    Assert.throwBadRequestIf(!!exists, "Email already exists");
+    Assert.throwBadRequestIf(!!existsEmail, "Email already exists");
+
+    const existsUsername = await db
+      .select()
+      .from(authTable)
+      .where(eq(authTable.username, data.username))
+      .get();
+
+    Assert.throwBadRequestIf(!!existsUsername, "Username already exists");
 
     const [users, authRows] = await db.batch([
       db

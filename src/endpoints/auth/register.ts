@@ -61,7 +61,7 @@ export class Register extends OpenAPIRoute {
         iat: Math.floor(Date.now() / 1000),
         exp: Math.floor(Date.now() / 1000) + 60 * 60,
         data: {
-          userId: user!.id.toString(),
+          userId: user!.id,
           username: auth!.username
         }
       },

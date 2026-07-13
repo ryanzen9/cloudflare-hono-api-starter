@@ -17,9 +17,13 @@ export class TodoDetail extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
+    const userId = c.get("jwtPayload")?.data.userId;
+    Assert.throwUnauthorizedIf(!userId, "Unauthorized");
+
     const todo = await TodoQueries.findById(getDB(c.env), data.params.id);
 
     Assert.throwNotFoundIf(!todo, "Todo not found");
+    Assert.throwUnauthorizedIf(todo!.userId !== userId, "Unauthorized");
 
     return c.json(ApiRes.success(todoDto.parse(todo)), 200);
   }

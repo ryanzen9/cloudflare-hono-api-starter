@@ -24,6 +24,8 @@ interface Todo {
 
 describe("Todo API", async () => {
   let headers: Record<string, string>;
+  let registrationHeaders: Record<string, string>;
+  let anotherUserHeaders: Record<string, string>;
   let userId: number;
 
   beforeAll(async () => {
@@ -31,6 +33,15 @@ describe("Todo API", async () => {
 
     const registerResponse = await registerUser(user);
     expect(registerResponse.status).toBe(201);
+    const registerData: ApiSuccess<{
+      userId: number;
+      username: string;
+      token: string;
+    }> = await registerResponse.json();
+    registrationHeaders = {
+      ...jsonHeaders,
+      Authorization: `Bearer ${registerData.data.token}`
+    };
 
     const loginResponse = await login(user);
     expect(loginResponse.status).toBe(201);
@@ -46,12 +57,25 @@ describe("Todo API", async () => {
       ...jsonHeaders,
       Authorization: `Bearer ${loginData.data.token}`
     };
+
+    const anotherUser = genInitUser();
+    const anotherRegisterResponse = await registerUser(anotherUser);
+    expect(anotherRegisterResponse.status).toBe(201);
+
+    const anotherLoginResponse = await login(anotherUser);
+    expect(anotherLoginResponse.status).toBe(201);
+    const anotherLoginData: ApiSuccess<{ token: string }> =
+      await anotherLoginResponse.json();
+    anotherUserHeaders = {
+      ...jsonHeaders,
+      Authorization: `Bearer ${anotherLoginData.data.token}`
+    };
   });
 
   it("creates, queries, updates, and deletes a todo for a user", async () => {
     const createTodoResponse = await request("/api/todos", {
       method: "POST",
-      headers: headers,
+      headers: registrationHeaders,
       body: JSON.stringify({
         title: "Test todo",
         description: "Created by a Worker test"
@@ -103,5 +127,56 @@ describe("Todo API", async () => {
       headers: headers
     });
     expect(deletedTodoResponse.status).toBe(404);
+  });
+
+  it("prevents another user from accessing a todo they do not own", async () => {
+    const createTodoResponse = await request("/api/todos", {
+      method: "POST",
+      headers,
+      body: JSON.stringify({
+        title: "Private todo",
+        description: "Only the owner may access this todo"
+      })
+    });
+    expect(createTodoResponse.status).toBe(201);
+
+    const createdTodos = (await createTodoResponse.json()) as ApiSuccess<
+      Todo[]
+    >;
+    const createdTodo = createdTodos.data[0];
+    if (!createdTodo) {
+      throw new Error("Todo creation did not return a todo");
+    }
+
+    const detailResponse = await request(`/api/todos/${createdTodo.id}`, {
+      headers: anotherUserHeaders
+    });
+    const updateResponse = await request(`/api/todos/${createdTodo.id}`, {
+      method: "POST",
+      headers: anotherUserHeaders,
+      body: JSON.stringify({ title: "Unauthorized update" })
+    });
+    const deleteResponse = await request(
+      `/api/todos/${createdTodo.id}/delete`,
+      {
+        method: "POST",
+        headers: anotherUserHeaders
+      }
+    );
+    const ownerDetailResponse = await request(`/api/todos/${createdTodo.id}`, {
+      headers
+    });
+
+    expect({
+      detail: detailResponse.status,
+      update: updateResponse.status,
+      delete: deleteResponse.status,
+      ownerDetail: ownerDetailResponse.status
+    }).toEqual({
+      detail: 401,
+      update: 401,
+      delete: 401,
+      ownerDetail: 200
+    });
   });
 });
