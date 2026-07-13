@@ -6,7 +6,7 @@ This is the primary agent knowledge base file.
 
 - `CLAUDE.md` and `GEMINI.md` are symlinks to this file—always edit `AGENTS.md` directly.
 - When learning something new about the codebase that would help with future tasks, update this file immediately.
-- Available Skills: prepare-pr
+- Available Skills: prepare-pr, write-project-docs
 
 ---
 
