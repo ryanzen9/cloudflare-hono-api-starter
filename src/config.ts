@@ -2,7 +2,7 @@ import type { Hono } from "hono";
 import { logger } from "hono/logger";
 import { ErrorHandler } from "./error-handler";
 import { JWTAuthMiddleware } from "./libs/auth";
-import type { AppEnv } from "./types";
+import { AppEnv } from "./types";
 
 export const config = (app: Hono<AppEnv>) => {
   // 日志

@@ -1,5 +1,4 @@
-import { fromHono } from "chanfana";
-import { Hono } from "hono";
+import { createAppFromFactory, createOpenApiFromFactory } from "./app";
 import { config } from "./config";
 import { Login } from "./endpoints/auth/login";
 import { TodoCreate } from "./endpoints/todos/todoCreate";
@@ -13,15 +12,14 @@ import { UserDetail } from "./endpoints/users/userDetail";
 import { UserList } from "./endpoints/users/userList";
 import { UserTodoList } from "./endpoints/users/userTodoList";
 import { UserUpdate } from "./endpoints/users/userUpdate";
-import type { AppEnv } from "./types";
-
-const app = new Hono<AppEnv>();
-
-config(app);
 
 const packageJson = await import("../package.json");
 
-const openapi = fromHono(app, {
+const app = createAppFromFactory(config);
+app.get("/", (c) => c.redirect("/docs"));
+app.get("/api/health", (c) => c.json({ message: "ok" }));
+
+const openapi = createOpenApiFromFactory(app, {
   docs_url: "/docs",
   schema: {
     info: {
@@ -31,15 +29,11 @@ const openapi = fromHono(app, {
     security: [{ bearerAuth: [] }]
   }
 });
-
 openapi.registry.registerComponent("securitySchemes", "bearerAuth", {
   type: "http",
   scheme: "bearer",
   bearerFormat: "JWT"
 });
-
-app.get("/", (c) => c.redirect("/docs"));
-app.get("/api/health", (c) => c.json({ message: "ok" }));
 
 openapi.post("/api/login", Login);
 

@@ -33,7 +33,6 @@ bun run test:watch
 
 - 不依赖 Worker Binding 的 Hono 路由或纯逻辑测试：`test/unit/`
 - 依赖 Worker Binding、D1 或完整 API 流程的测试：`test/integration/<resource>/`
-- 类型安全的 Hono 测试应用工厂：`test/app.ts`
 - 公共请求辅助方法：`test/request.ts`
 - 测试环境初始化：`test/setup.ts`
 
@@ -45,9 +44,13 @@ bun run test:watch
 
 ```typescript
 import { describe, expect, it } from "vitest";
-import app from "../../src";
+import { createAppFromFactory } from "../../src/app";
 
 describe("Hono app", () => {
+  const app = createAppFromFactory();
+  app.get("/", (c) => c.redirect("/docs"));
+  app.get("/api/health", (c) => c.json({ message: "ok" }));
+
   it("responds to the health endpoint without a Worker binding", async () => {
     const response = await app.request("/api/health");
 
@@ -64,28 +67,42 @@ describe("Hono app", () => {
 });
 ```
 
-需要验证中间件 Binding 和上下文变量时，使用 `test/app.ts` 提供的 `createApp()` 创建带有 `AppEnv` 类型的独立 Hono 实例，并在 `app.request()` 的第三个参数中传入测试 Binding：
+## App 工厂
+
+`src/app.ts` 使用 Hono `createFactory()` 创建应用，调用工厂方法初始化 app 对象。
 
 ```typescript
-// test/app.ts
-import { Hono } from "hono";
-import { AppEnv } from "../src/types";
+// src/app.ts
+export function createAppFromFactory(
+  initApp?: (app: Hono<AppEnv>) => void,
+): Hono<AppEnv> {
+  return createFactory({
+    initApp,
+  }).createApp();
+}
 
-export const createApp = () => new Hono<AppEnv>();
+export function createOpenApiFromFactory(
+  app: Hono<AppEnv>,
+  options?: RouterOptions,
+) {
+  return fromHono(app, options);
+}
 ```
 
-JWT 中间件单元测试通过该工厂注册待测试的中间件和临时路由。当前覆盖以下行为：
+两个工厂只负责应用初始化和 OpenAPI 适配，不会自动注册根路径、健康检查或业务端点。测试应根据验证范围注册所需路由，避免加载不相关接口。
 
-- 合法 JWT 可以正常放行
-- 非法 Bearer token 返回 `401`
-- 忽略路径仅进行精确匹配
+需要验证生产应用配置、Binding 和上下文变量时，可以通过 `createAppFromFactory()` 创建应用，并在 `app.request()` 的第三个参数中传入测试 Binding。
 
 ```typescript
-const app = createApp();
-app.use("/api/*", JWTAuthMiddleware({ ignorePath: ["/api/login"] }));
+const app = createAppFromFactory((app) => {
+  app.use("/api/*", JWTAuthMiddleware({ ignorePath: ["/api/login"] }));
+});
+
 app.get("/api/protected", (c) =>
   c.json({ ok: true, jwtPayload: c.get("jwtPayload") }),
 );
+app.get("/api/login", (c) => c.json({ ignored: true }));
+app.get("/api/login/extra", (c) => c.json({ ignored: false }));
 const token = await sign({ sub: "1" }, JWT_SECRET, "HS256");
 
 const response = await app.request(
@@ -101,9 +118,12 @@ expect(await response.json()).toMatchObject({
   ok: true,
   jwtPayload: { sub: "1" },
 });
+
+expect((await app.request("/api/login")).status).toBe(200);
+expect((await app.request("/api/login/extra")).status).toBe(401);
 ```
 
-## Worker 和 D1 集成测试
+## D1 集成
 
 `vitest.config.ts` 使用 `cloudflareTest()` 加载 `wrangler.jsonc`，并通过 `TEST_MIGRATIONS` 向隔离的测试数据库提供迁移文件：
 
@@ -149,7 +169,7 @@ beforeAll(async () => {
 `test/request.ts` 提供以下公共方法：
 
 - `request()`：通过 `exports.default.fetch()` 请求完整 Worker，不自动添加认证信息
-- `requestWithEnv()`：通过 `app.request()` 请求应用，并传入 `DB`、`JWT_SECRET`
+- `requestWithEnv()`：直接调用生产 Hono 应用的 `request()`，并传入 `DB`、`JWT_SECRET`
 - `login()`：使用测试账号登录并返回登录响应
 - `jsonHeaders`：通用 JSON 请求头
 
@@ -159,6 +179,20 @@ beforeAll(async () => {
 export const request = (path: string, init?: RequestInit) =>
   exports.default.fetch(new Request(`https://example.com${path}`, init));
 ```
+
+`requestWithEnv()` 复用 `src/index.ts` 默认导出的生产 Hono 应用，因此测试和 Worker 入口使用同一套路由声明；它不会调用 Worker 默认导出的 `fetch()`：
+
+```typescript
+import app from "../src";
+
+export const requestWithEnv = (path: string, init?: RequestInit) =>
+  app.request(path, init, {
+    DB: env.DB,
+    JWT_SECRET: env.JWT_SECRET,
+  });
+```
+
+新增或调整 API 路由时，只需维护 `src/index.ts` 中的端点声明。需要验证完整 Worker 入口时使用 `request()`；只需要直接调用 Hono 应用并显式传入 Binding 时使用 `requestWithEnv()`。
 
 ## 集成测试
 
@@ -191,14 +225,4 @@ describe("User API", async () => {
     expect(createResponse.status).toBe(201);
   });
 });
-```
-
-Todo 集成测试同样使用登录 JWT。查询当前用户的 Todo 时，请求当前路由 `/api/users/todos`，用户身份由 JWT 中的 `jwtPayload.data.userId` 提供，不再通过路径参数传递：
-
-```typescript
-const userTodosResponse = await request("/api/users/todos", {
-  headers,
-});
-
-expect(userTodosResponse.status).toBe(200);
 ```
