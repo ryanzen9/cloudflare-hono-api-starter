@@ -1,7 +1,6 @@
 import { OpenAPIRoute, OpenAPIRouteSchema } from "chanfana";
 import { z } from "zod";
 import { Assert } from "../../libs/error";
-import { DownloadFile } from "../../libs/oss";
 import { AppContext } from "../../types";
 
 export class Download extends OpenAPIRoute {
@@ -41,28 +40,32 @@ export class Download extends OpenAPIRoute {
 
     const fileKey = data.params.key;
 
-    const object = await DownloadFile(fileKey, c.env.R2_BUCKET);
+    const object = await c.env.R2_BUCKET.get(fileKey);
 
-    Assert.throwNotFoundIf(!object, "File not found");
+    if (!object) {
+      Assert.throwNotFound(`File not found`);
+    }
 
     const headers = new Headers();
 
-    const originalName = object!.originalName;
+    object.writeHttpMetadata(headers);
 
-    headers.set("etag", object!.etag);
+    headers.set("ETag", object.httpEtag);
 
     headers.set(
       "Content-Disposition",
-      `attachment; filename*=UTF-8''${encodeURIComponent(originalName)}`
+      `attachment; filename*=UTF-8''${encodeURIComponent(
+        object.customMetadata?.originalName ??
+          fileKey.split("/").at(-1) ??
+          "download"
+      )}`
     );
 
     if (!headers.has("Content-Type")) {
       headers.set("Content-Type", "application/octet-stream");
     }
 
-    object!.writeHttpMetadata(headers);
-
-    return new Response(object!.stream, {
+    return new Response(object.body, {
       status: 200,
       headers
     });

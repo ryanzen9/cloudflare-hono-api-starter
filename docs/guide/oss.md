@@ -156,7 +156,7 @@ const url = `/api/download/${encodeURIComponent(key)}`;
 const response = await fetch(url);
 ```
 
-Hono 匹配路由后会把参数还原为原始 Key，`DownloadFile()` 再通过 `R2_BUCKET.get(key)` 读取对象。
+Hono 匹配路由后会把参数还原为原始 Key，通过 `R2_BUCKET.get(key)` 读取对象。
 
 成功响应直接返回对象流，并设置以下响应头：
 
