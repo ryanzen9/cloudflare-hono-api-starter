@@ -32,7 +32,9 @@ export class TodoUpdate extends OpenAPIRoute {
 
     const todo = await TodoQueries.findById(db, data.params.id);
 
-    Assert.throwUnauthorizedIf(todo?.userId !== userId, "Unauthorized");
+    Assert.throwNotFoundIf(!todo, "Todo not found");
+
+    Assert.throwUnauthorizedIf(todo!.userId !== userId, "Unauthorized");
 
     const todoData = updateTodoSchema.parse({
       ...data.body,
