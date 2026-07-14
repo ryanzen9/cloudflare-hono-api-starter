@@ -1,4 +1,4 @@
 interface:
   display_name: "Prepare PR"
-  short_description: "Prepare pull requests based on project context"
-  default_prompt: "Use $prepare-pr to analyze the selected project scope and prepare an accurate pull request."
+  short_description: "Objectively summarize changes and prepare pull requests"
+  default_prompt: "Use $prepare-pr to objectively summarize the selected Git changes and prepare a pull request draft."
