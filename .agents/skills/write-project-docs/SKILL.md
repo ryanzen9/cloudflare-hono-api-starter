@@ -7,79 +7,79 @@ description: Analyze repository context and a user-selected scope, then create o
 
 Create documentation that describes the repository as it actually exists. Treat source code, configuration, tests, schemas, and repository instructions as evidence; do not fill gaps with plausible but unverified claims.
 
-## Workflow
+## 工作流程
 
-1. Read the applicable repository instructions, especially `AGENTS.md`, and preserve unrelated user changes.
-2. Resolve the requested scope before analyzing content:
-   - For explicit files or directories, inspect those paths and the smallest set of imports, callers, tests, schemas, and configuration needed to explain them.
-   - For the Git staging area, inspect `git diff --cached --name-status`, `git diff --cached`, and relevant surrounding code. Document staged behavior only; distinguish related unstaged changes if they affect accuracy.
-   - For a branch, commit, or comparison range, inspect the requested diff and the current versions of affected files.
-   - For a topic without a file range, locate relevant files with repository search, then narrow the investigation to the implementation and its direct dependencies.
-   - If neither the subject nor the target document can be inferred safely, ask one focused question. Otherwise proceed with the narrowest reasonable interpretation and state it.
-3. Discover existing documentation and conventions before writing. Check relevant README files, `docs/`, documentation-site configuration, templates, generated API specifications, and neighboring pages. Match their language, terminology, heading hierarchy, front matter, links, and navigation model.
-4. Build an evidence map for the subject:
-   - Identify entry points, public interfaces, core modules, data models, configuration, runtime dependencies, tests, and failure paths.
-   - Trace important control flow and data flow across files.
-   - Record exact file paths and symbol names supporting each important statement.
-   - Prefer current implementation and configuration over stale prose. Use tests to confirm expected behavior. Treat generated documentation as derived output unless repository instructions declare it authoritative.
-5. Decide whether to create or update documentation:
-   - Use the path named by the user when supplied.
-   - Otherwise update the existing canonical page for the subject when one exists.
-   - Create a new page in the repository's established documentation location only when no canonical page exists. Avoid duplicate pages.
-6. Plan the document around the reader's task. Include only relevant sections from the content guidance below.
-7. Write or modify the document. Keep every factual claim traceable to inspected project evidence.
-8. Verify the result against the implementation and repository conventions, then review the final diff.
+1. 阅读适用的仓库说明，尤其是 `AGENTS.md`，并保留与当前任务无关的用户变更。
+2. 在分析内容之前，先明确用户请求的范围：
+   - 对于明确指定的文件或目录，检查这些路径，以及为解释它们所必需的最小范围内的导入、调用方、测试、Schema 和配置。
+   - 对于 Git 暂存区，检查 `git diff --cached --name-status`、`git diff --cached` 以及相关上下文代码。仅记录已经暂存的行为；如果相关的未暂存变更会影响文档准确性，应明确区分并说明。
+   - 对于分支、提交或比较范围，检查用户指定的 diff 以及受影响文件的当前版本。
+   - 对于未指定文件范围的主题，先通过仓库搜索定位相关文件，再将调查范围缩小到实际实现及其直接依赖。
+   - 如果主题和目标文档都无法安全推断，则提出一个聚焦的问题。否则按照最窄且合理的解释继续执行，并明确说明该解释。
+3. 在编写前，查找现有文档和仓库约定。检查相关 README、`docs/`、文档站配置、模板、生成的 API 规范以及相邻页面。遵循现有文档的语言、术语、标题层级、front matter、链接方式和导航模型。
+4. 为文档主题建立证据映射：
+   - 识别入口点、公开接口、核心模块、数据模型、配置、运行时依赖、测试和失败路径。
+   - 跟踪跨文件的重要控制流和数据流。
+   - 记录支撑每项重要陈述的准确文件路径和符号名称。
+   - 优先使用当前实现和配置，而不是可能已经过时的文字说明。使用测试确认预期行为。除非仓库说明明确声明生成文档具有权威性，否则将其视为派生产物。
+5. 决定创建还是更新文档：
+   - 用户提供了路径时，使用用户指定的路径。
+   - 否则，如果该主题已有权威文档页面，则更新现有页面。
+   - 仅当不存在权威页面时，才在仓库既定的文档位置创建新页面。避免创建重复文档。
+6. 围绕读者需要完成的任务规划文档。仅选择下方内容指导中与主题相关的章节。
+7. 编写或修改文档。确保每项事实性陈述都能追溯到已检查的项目证据。
+8. 根据实际实现和仓库约定验证结果，然后审查最终 diff。
 
-## Content Guidance
+## 内容指导
 
-Select sections according to the topic rather than forcing a fixed template:
+根据主题选择章节，不要强制套用固定模板：
 
-- Purpose, audience, and scope.
-- Concepts and terminology used by the project.
-- Architecture or design overview, including component responsibilities and boundaries.
-- Request, control, or data flow when it materially improves understanding.
-- File structure with concise explanations of relevant files and directories.
-- Public APIs, schemas, bindings, configuration, and runtime behavior.
-- Error handling, constraints, tradeoffs, and known limitations supported by evidence.
-- Code examples that demonstrate the current implementation.
-- Testing and verification instructions using repository-approved commands.
-- Extension or maintenance guidance when the implementation exposes a clear pattern.
+- 目的、目标读者和范围。
+- 项目使用的概念和术语。
+- 架构或设计概览，包括组件职责和边界。
+- 当请求流、控制流或数据流能够明显提升理解时，对其进行说明。
+- 文件结构，并简要解释相关文件和目录。
+- 公开 API、Schema、绑定、配置和运行时行为。
+- 有证据支持的错误处理、约束、权衡和已知限制。
+- 展示当前实现方式的代码示例。
+- 使用仓库认可命令进行测试和验证的说明。
+- 当实现中存在清晰扩展模式时，提供扩展或维护指导。
 
-Explain why a design exists only when rationale is documented or can be directly inferred from code constraints. Label inferences explicitly. Separate current behavior from proposals, future work, and hypothetical alternatives.
+只有当设计依据已经被记录，或者可以直接从代码约束中推断时，才解释某项设计为何存在。对于推断内容，必须明确标记。应将当前行为与提案、未来工作和假设性替代方案分开说明。
 
-## Code and Structure Examples
+## 代码和结构示例
 
-- Copy or minimally simplify examples from current source code. Keep imports, names, paths, options, and return shapes accurate.
-- Never invent APIs, environment variables, commands, configuration keys, database fields, or file paths.
-- Mark non-runnable fragments as illustrative or pseudocode.
-- Keep examples focused; link to the source file instead of duplicating large implementations.
-- Use a compact directory tree only for files relevant to the documented subject.
-- Add tables or Mermaid diagrams only when they make multi-component relationships or flows materially clearer.
-- Never expose secrets, credentials, private environment values, or sensitive data encountered during analysis.
+- 从当前源代码中复制示例，或进行最小程度的简化。确保导入、名称、路径、选项和返回结构准确。
+- 不得虚构 API、环境变量、命令、配置键、数据库字段或文件路径。
+- 将无法直接运行的片段标记为说明性示例或伪代码。
+- 保持示例聚焦；对于大型实现，应链接到源文件，而不是在文档中重复大段代码。
+- 目录树只包含与当前文档主题相关的文件。
+- 仅当表格或 Mermaid 图能够显著提升对多组件关系或流程的理解时才使用。
+- 不得暴露分析过程中发现的秘密信息、凭证、私有环境变量值或敏感数据。
 
-## Editing Rules
+## 编辑规则
 
-- Preserve correct existing content and the author's established voice when updating a page.
-- Correct stale statements that fall within the requested scope. Do not silently broaden into a general documentation rewrite.
-- Preserve valid front matter and documentation-site metadata. Update navigation or sidebars only when the new page must be discoverable and repository conventions require it.
-- Use relative links that work from the documentation page unless the repository specifies another link style.
-- Do not edit implementation code, generated files, environment configuration, or CI unless the user explicitly includes those changes.
-- Do not publish agent-only notes or internal instruction files as human-facing documentation.
+- 更新现有页面时，保留其中正确的内容以及作者既有的表达风格。
+- 修正请求范围内已经过时的陈述。不得静默扩大范围，将任务变成一般性的文档重写。
+- 保留有效的 front matter 和文档站元数据。只有当新页面需要被发现，并且仓库约定要求时，才更新导航或侧边栏。
+- 使用从当前文档页面出发能够正常工作的相对链接，除非仓库规定了其他链接风格。
+- 除非用户明确将这些内容纳入变更范围，否则不得修改实现代码、生成文件、环境配置或 CI。
+- 不得将仅供 Agent 使用的说明或内部指令文件发布为面向用户的文档。
 
-## Verification
+## 验证
 
-Before reporting completion:
+在报告任务完成前：
 
-1. Re-read every technical claim, example, command, path, and symbol against the inspected files.
-2. Confirm referenced local files and internal links exist, and check anchors when practical.
-3. Confirm examples match current types, API methods, status codes, response shapes, bindings, and package-manager conventions.
-4. Run documentation lint, formatting checks, link checks, or site builds when available and relevant. Follow all repository-mandated validation steps for documentation changes.
-5. Inspect Git status and the documentation diff. Ensure only intended files changed and disclose pre-existing or unrelated changes.
-6. Summarize created or updated documentation, its evidence scope, and validation results. State any unresolved uncertainty instead of presenting it as fact.
+1. 对照已检查的文件，重新核对每项技术陈述、示例、命令、路径和符号。
+2. 确认引用的本地文件和内部链接存在，并在可行时检查锚点是否正确。
+3. 确认示例符合当前类型、API 方法、状态码、响应结构、绑定方式和包管理器约定。
+4. 当相关工具存在且适用于当前任务时，运行文档 lint、格式检查、链接检查或站点构建。遵循仓库对文档变更规定的全部验证步骤。
+5. 检查 Git 状态和文档 diff。确保只修改了预期文件，并披露预先存在或无关的变更。
+6. 总结创建或更新的文档、文档所依据的证据范围以及验证结果。对于尚未解决的不确定性，应明确说明，不得将其表述为事实。
 
-## Guardrails
+## 安全约束
 
-- Never claim to have inspected, executed, or validated something without evidence.
-- Never describe staged or diff-scoped changes as deployed or already released.
-- Never use external documentation as a substitute for the repository's actual implementation. Consult external primary sources only when needed to explain a dependency or standard, and distinguish them from project behavior.
-- Stop and request direction when conflicting sources would materially change the document and the authoritative source cannot be determined from repository instructions.
+- 在没有证据的情况下，不得声称已经检查、执行或验证某项内容。
+- 不得将暂存区或 diff 范围中的变更描述为已经部署或已经发布。
+- 不得使用外部文档替代仓库中的实际实现。只有在解释某项依赖或标准确有必要时，才查阅外部一手资料，并将外部资料与项目自身行为明确区分。
+- 当不同来源存在冲突，并且无法通过仓库说明确定权威来源，而且该冲突会实质性影响文档内容时，应停止执行并请求用户提供方向。
