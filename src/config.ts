@@ -1,4 +1,5 @@
 import type { Hono } from "hono";
+import { except } from "hono/combine";
 import { logger } from "hono/logger";
 import { JWTAuthMiddleware } from "./libs/auth/middlewares";
 import { ErrorHandler } from "./libs/error";
@@ -15,8 +16,15 @@ export const config = (app: Hono<AppEnv>) => {
   //   app.use("/docs", BearerTokenAuthMiddleware());
   app.use(
     "/api/*",
-    JWTAuthMiddleware({
-      ignorePath: ["/api/health", "/api/login", "/api/register"]
-    })
+    except(
+      [
+        "/api/health",
+        "/api/login",
+        "/api/register",
+        "/api/download/:key",
+        "/api/callback"
+      ],
+      JWTAuthMiddleware()
+    )
   );
 };

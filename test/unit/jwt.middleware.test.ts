@@ -1,3 +1,4 @@
+import { except } from "hono/combine";
 import { sign } from "hono/jwt";
 import { describe, expect, it } from "vitest";
 import { createAppFromFactory } from "../../src/app";
@@ -6,7 +7,7 @@ import { JWTAuthMiddleware } from "../../src/libs/auth/middlewares";
 const JWT_SECRET = "test-jwt-secret";
 
 const app = createAppFromFactory((app) => {
-  app.use("/api/*", JWTAuthMiddleware({ ignorePath: ["/api/login"] }));
+  app.use("/api/*", except("/api/login", JWTAuthMiddleware({ alg: "HS256" })));
 });
 
 app.get("/api/protected", (c) =>

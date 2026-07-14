@@ -5,7 +5,7 @@ import { TodoQueries } from "../../db/queries";
 import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { ApiRes, RequestBody, ResponseArrayBody } from "../rest";
-import { createTodoDto, pageTodoDto } from "./todoDto";
+import { createTodoDto, todoVo } from "./todoDto";
 import { insertTodoSchema } from "./todoSchema";
 
 export class TodoCreate extends OpenAPIRoute {
@@ -13,7 +13,7 @@ export class TodoCreate extends OpenAPIRoute {
     tags: ["Todos"],
     summary: "Create a new Todo",
     request: RequestBody(createTodoDto),
-    responses: ResponseArrayBody(pageTodoDto)
+    responses: ResponseArrayBody(todoVo)
   };
 
   async handle(c: AppContext) {
@@ -34,7 +34,43 @@ export class TodoCreate extends OpenAPIRoute {
       updatedAt: new Date().toISOString()
     });
 
-    const result = await TodoQueries.create(db, insertedTodo);
+    let todoAttachments: (R2Object | null)[] = [];
+
+    if (todoData.attachments && todoData.attachments.length > 0) {
+      const todoAttachemtsPromise = todoData.attachments?.map((attachment) =>
+        c.env.R2_BUCKET.get(attachment.fileKey)
+      );
+
+      todoAttachments = await Promise.all(todoAttachemtsPromise || []);
+    }
+
+    const attachmentsInserted = todoData.attachments
+      ?.map((attachment) => {
+        const ossObj = todoAttachments.find(
+          (att) => att?.key === attachment.fileKey
+        );
+        if (!ossObj) return;
+
+        return {
+          fileName: ossObj?.key.split("-").pop() || "",
+          filePath: attachment.fileKey,
+          fileSize: ossObj?.size || 0,
+          fileHash: ossObj?.etag || "",
+          fileKey: attachment.fileKey,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+      })
+      .filter((attachment) => attachment !== undefined);
+
+    const insertRows = await TodoQueries.create(db, {
+      ...insertedTodo,
+      attachments: attachmentsInserted
+    });
+
+    const rows = await TodoQueries.findById(db, insertRows[0]!.id);
+
+    const result = todoVo.parse(rows);
 
     return c.json(ApiRes.success(result), 201);
   }

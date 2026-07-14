@@ -96,7 +96,7 @@ export function createOpenApiFromFactory(
 
 ```typescript
 const app = createAppFromFactory((app) => {
-  app.use("/api/*", JWTAuthMiddleware({ ignorePath: ["/api/login"] }));
+  app.use("/api/*", JWTAuthMiddleware());
 });
 
 app.get("/api/protected", (c) =>

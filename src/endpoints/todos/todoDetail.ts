@@ -5,14 +5,14 @@ import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import { ApiRes, RequestParams, ResponseObjectBody } from "../rest";
-import { todoDto } from "./todoDto";
+import { todoVo } from "./todoDto";
 
 export class TodoDetail extends OpenAPIRoute {
   schema = {
     tags: ["Todos"],
     summary: "Get a Todo by ID",
     request: RequestParams(idParamDto),
-    responses: ResponseObjectBody(todoDto)
+    responses: ResponseObjectBody(todoVo)
   };
 
   async handle(c: AppContext) {
@@ -25,6 +25,6 @@ export class TodoDetail extends OpenAPIRoute {
     Assert.throwNotFoundIf(!todo, "Todo not found");
     Assert.throwUnauthorizedIf(todo!.userId !== userId, "Unauthorized");
 
-    return c.json(ApiRes.success(todoDto.parse(todo)), 200);
+    return c.json(ApiRes.success(todoVo.parse(todo)), 200);
   }
 }

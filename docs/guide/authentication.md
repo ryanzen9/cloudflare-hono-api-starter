@@ -73,9 +73,17 @@ JWT payload 的结构如下：
 ```typescript
 app.use(
   "/api/*",
-  JWTAuthMiddleware({
-    ignorePath: ["/api/health", "/api/login"],
-  }),
+  except(
+    [
+      "/api/health",
+      "/api/login",
+      "/api/register",
+      "/api/upload",
+      "/api/download/:key",
+      "/api/callback",
+    ],
+    JWTAuthMiddleware(),
+  ),
 );
 ```
 
