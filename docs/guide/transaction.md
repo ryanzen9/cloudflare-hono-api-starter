@@ -1,12 +1,3 @@
----
-title: "事务"
-date: 2026-07-13
-author: "Ryan Zeng"
-tags: []
-categories: []
-draft: false
----
-
 # 事务
 
 本项目使用 Cloudflare D1 和 Drizzle ORM。D1 以自动提交模式运行；当多条语句必须同时成功或同时失败时，项目使用 `db.batch()`，不使用 Drizzle 的 `db.transaction()`。
