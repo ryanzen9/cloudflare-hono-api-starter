@@ -1,12 +1,3 @@
----
-title: "异常处理"
-date: 2026-07-11
-author: "Ryan Zeng"
-tags: []
-categories: []
-draft: false
----
-
 # 异常处理
 
 ## 自定义异常类
@@ -39,10 +30,13 @@ app.onError((err, c) => {
   const message = err.message || "Internal Server Error";
   return c.json({ success: false, message }, status);
 });
+```
 
-// 使用自定义的错误处理器
+使用自定义的错误处理器, 方法补充返回值类型增强类型推断
+
+```ts
 // error-handler.ts
-export const ErrorHandler = () => (err: Error, c: AppContext) => {
+export const ErrorHandler = () => async (err: Error, c: AppContext) => {
   if (err instanceof HTTPException) {
     if (err.status === 401) {
       return c.json(ApiRes.error(err.message), 401);
@@ -53,6 +47,23 @@ export const ErrorHandler = () => (err: Error, c: AppContext) => {
     if (err.status === 400) {
       console.error(`400 Error: ${err.message}`);
       console.error(`Stack Trace: ${err.stack}`);
+
+      // Chanfana 已经生成了包含 Zod issues 的响应。
+      if (err.res) {
+        const validation = (await err.res.clone().json()) as {
+          errors?: Array<{
+            code: number;
+            message: string;
+            path: string[];
+          }>;
+        };
+
+        const errorMsg = validation.errors
+          ?.map((e) => `${e.path.join(".")}: ${e.message}`)
+          .join("; ");
+
+        return c.json(ApiRes.error(errorMsg || err.message), 400);
+      }
       return c.json(ApiRes.error(err.message), 400);
     }
     if (err.status === 500) {
@@ -68,6 +79,7 @@ export const ErrorHandler = () => (err: Error, c: AppContext) => {
   console.error(`Stack Trace: ${err.stack}`);
   return c.json(ApiRes.error(err.message, err.stack), 500);
 };
+
 app.onError(ErrorHandler());
 ```
 
@@ -82,7 +94,7 @@ export class Assert {
     status: ContentfulStatusCode,
     message?: string,
     cause?: unknown,
-  ) {
+  ): never {
     throw new HTTPException(status, { message, cause });
   }
 
@@ -91,47 +103,59 @@ export class Assert {
     status: ContentfulStatusCode,
     message?: string,
     cause?: unknown,
-  ) {
+  ): asserts condition is false {
     if (condition) {
       throw new HTTPException(status, { message, cause });
     }
   }
 
-  static throwUnauthorized(message?: string) {
+  static throwUnauthorized(message?: string): never {
     throw UnauthorizedException(message);
   }
 
-  static throwUnauthorizedIf(condition: boolean, message?: string) {
+  static throwUnauthorizedIf(
+    condition: boolean,
+    message?: string,
+  ): asserts condition is false {
     if (condition) {
       throw UnauthorizedException(message);
     }
   }
 
-  static throwNotFound(message?: string) {
+  static throwNotFound(message?: string): never {
     throw NotFoundException(message);
   }
 
-  static throwNotFoundIf(condition: boolean, message?: string) {
+  static throwNotFoundIf(
+    condition: boolean,
+    message?: string,
+  ): asserts condition is false {
     if (condition) {
       throw NotFoundException(message);
     }
   }
 
-  static throwBadRequest(message?: string) {
+  static throwBadRequest(message?: string): never {
     throw BadRequestException(message);
   }
 
-  static throwBadRequestIf(condition: boolean, message?: string) {
+  static throwBadRequestIf(
+    condition: boolean,
+    message?: string,
+  ): asserts condition is false {
     if (condition) {
       throw BadRequestException(message);
     }
   }
 
-  static throwInternalServerError(message?: string) {
+  static throwInternalServerError(message?: string): never {
     throw InternalServerErrorException(message);
   }
 
-  static throwInternalServerErrorIf(condition: boolean, message?: string) {
+  static throwInternalServerErrorIf(
+    condition: boolean,
+    message?: string,
+  ): asserts condition is false {
     if (condition) {
       throw InternalServerErrorException(message);
     }
