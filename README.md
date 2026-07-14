@@ -1,7 +1,9 @@
-# Cloudflare Hono API Starter
+<h1 align="center">
+Cloudflare Hono API Starter
+</h1>
 
 <p align="center">
-  <strong>面向 Cloudflare Workers 的类型安全 API 脚手架</strong>
+  <strong>面向 Cloudflare Workers 与 Hono 的 API 脚手架</strong>
 </p>
 
 <p align="center">
@@ -25,12 +27,13 @@
   <img alt="Hono 4" src="https://img.shields.io/badge/Hono-4.x-E36002?style=flat-square&logo=hono&logoColor=white">
   <img alt="Bun 1.3.13" src="https://img.shields.io/badge/Bun-1.3.13-000000?style=flat-square&logo=bun&logoColor=white">
   <img alt="OpenAPI 3.1" src="https://img.shields.io/badge/OpenAPI-3.1-6BA539?style=flat-square&logo=openapiinitiative&logoColor=white">
+  <img alt="Drizzle ORM" src="https://img.shields.io/badge/Drizzle%20ORM-0.45.2-C5F74F?logo=drizzle&logoColor=000000)](https://orm.drizzle.team/">
 </p>
 
 <p align="center">
   <a href="#特性">特性</a> ·
+  <a href="#技术栈">技术栈</a> ·
   <a href="#快速开始">快速开始</a> ·
-  <a href="#api">API</a> ·
   <a href="#测试">测试</a> ·
   <a href="#openapi-与文档">文档</a> ·
   <a href="#部署">部署</a>
@@ -149,6 +152,8 @@ bun run test:watch
 不要使用 `bun test`，它会调用 Bun 内置测试运行器，而不是本项目配置的 Vitest Workers 测试池。
 
 ## OpenAPI 与文档
+
+Swagger 默认后缀为 `/docs`。访问 `http://localhost:8787/docs` 可以查看 Swagger UI。
 
 ### Swagger 与 OpenAPI JSON
 
