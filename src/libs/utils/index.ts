@@ -1,5 +1,5 @@
 const PASSWORD_HASH_ALGORITHM = "pbkdf2-sha256";
-const PBKDF2_ITERATIONS = 600_000;
+const PBKDF2_ITERATIONS = 60_000;
 const PASSWORD_SALT_LENGTH = 16;
 const PASSWORD_HASH_LENGTH = 32;
 const textEncoder = new TextEncoder();

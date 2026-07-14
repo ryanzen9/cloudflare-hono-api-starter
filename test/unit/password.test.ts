@@ -7,7 +7,7 @@ describe("password hashing", () => {
     const firstHash = await hashPassword(password);
     const secondHash = await hashPassword(password);
 
-    expect(firstHash).toMatch(/^pbkdf2-sha256\$600000\$/);
+    expect(firstHash).toMatch(/^pbkdf2-sha256\$60000\$/);
     expect(secondHash).not.toBe(firstHash);
     await expect(verifyPassword(firstHash, password)).resolves.toBe(true);
     await expect(verifyPassword(firstHash, "wrong password")).resolves.toBe(
