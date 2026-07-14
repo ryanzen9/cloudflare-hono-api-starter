@@ -3,6 +3,12 @@ import { getDB } from "../../db/dao";
 import { TodoQueries } from "../../db/queries";
 
 import { Assert } from "../../libs/error";
+import {
+  getFileHash,
+  getFilePath,
+  getFileSize,
+  getOriginalFileName
+} from "../../libs/oss";
 import { AppContext } from "../../types";
 import { ApiRes, RequestBody, ResponseObjectBody } from "../rest";
 import { createTodoDto, todoVo } from "./todoDto";
@@ -52,11 +58,11 @@ export class TodoCreate extends OpenAPIRoute {
         if (!ossObj) return;
 
         return {
-          fileName: ossObj?.key.split("-").pop() || "",
-          filePath: attachment.fileKey,
-          fileSize: ossObj?.size || 0,
-          fileHash: ossObj?.etag || "",
           fileKey: attachment.fileKey,
+          fileName: getOriginalFileName(ossObj),
+          filePath: getFilePath(ossObj),
+          fileSize: getFileSize(ossObj),
+          fileHash: getFileHash(ossObj),
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString()
         };

@@ -181,7 +181,9 @@ describe("Todo API", async () => {
 
   it("creates, queries, updates, a todo with attachments", async () => {
     const fileContent = "Hello, World!";
-    const file = new File([fileContent], "hello.txt", { type: "text/plain" });
+    const file = new File([fileContent], "invoice-2026.pdf", {
+      type: "application/pdf"
+    });
 
     const formData = new FormData();
     formData.append("file", file);
@@ -236,15 +238,19 @@ describe("Todo API", async () => {
     const attachment = detailedTodo.data.attachments?.[0];
     expect(attachment).toBeDefined();
     expect(attachment?.fileKey).toBe(attachmentKey);
-    expect(attachment?.fileName).toBe("hello.txt");
+    expect(attachment?.fileName).toBe("invoice-2026.pdf");
     expect(attachment?.filePath).toBe(attachmentKey);
     expect(attachment?.fileSize).toBe(fileContent.length);
     expect(attachment?.fileHash).toBeDefined();
 
     const updatedFileContext = "Hello, World!(updated)";
-    const updatedFile = new File([updatedFileContext], "hello.txt", {
-      type: "text/plain"
-    });
+    const updatedFile = new File(
+      [updatedFileContext],
+      "invoice-2026-final.pdf",
+      {
+        type: "application/pdf"
+      }
+    );
 
     const updatedFormData = new FormData();
     updatedFormData.append("file", updatedFile);
@@ -281,6 +287,9 @@ describe("Todo API", async () => {
     expect(updatedTodo.data.attachments?.[0]?.fileKey).toBe(
       updatedAttachmentKey
     );
+    expect(updatedTodo.data.attachments?.[0]?.fileName).toBe(
+      "invoice-2026-final.pdf"
+    );
 
     const updatedDetailResponse = await request(
       `/api/todos/${createdTodo.id}`,
@@ -295,6 +304,9 @@ describe("Todo API", async () => {
     expect(updatedDetailedTodo.data.attachments).toHaveLength(1);
     expect(updatedDetailedTodo.data.attachments?.[0]?.fileKey).toBe(
       updatedAttachmentKey
+    );
+    expect(updatedDetailedTodo.data.attachments?.[0]?.fileName).toBe(
+      "invoice-2026-final.pdf"
     );
   });
 });
