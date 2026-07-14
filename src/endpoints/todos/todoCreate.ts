@@ -2,6 +2,7 @@ import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
 import { TodoQueries } from "../../db/queries";
 
+import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { ApiRes, RequestBody, ResponseArrayBody } from "../rest";
 import { createTodoDto, pageTodoDto } from "./todoDto";
@@ -21,8 +22,13 @@ export class TodoCreate extends OpenAPIRoute {
     const todoData = data.body;
     const db = getDB(c.env);
 
+    const userId = c.get("jwtPayload")?.data?.userId;
+
+    Assert.throwBadRequestIf(!userId, "User ID not found in JWT payload");
+
     const insertedTodo = insertTodoSchema.parse({
       ...todoData,
+      userId: userId,
       completed: 0,
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString()

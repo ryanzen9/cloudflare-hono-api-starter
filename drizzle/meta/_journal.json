@@ -15,6 +15,20 @@
       "when": 1783498385140,
       "tag": "0001_cold_starfox",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1783930239641,
+      "tag": "0002_calm_lockheed",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1783936855509,
+      "tag": "0003_conscious_spitfire",
+      "breakpoints": true
     }
   ]
 }

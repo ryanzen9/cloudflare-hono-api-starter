@@ -96,7 +96,7 @@ app.use(
 const jwtPayload = c.get("jwtPayload");
 const userId = jwtPayload.data.userId;
 
-BizError.throwUnauthorizedIf(
+Assert.throwUnauthorizedIf(
   !userId,
   "Unauthorized: User ID not found in JWT payload",
 );

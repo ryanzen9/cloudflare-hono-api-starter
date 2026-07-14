@@ -1,8 +1,8 @@
 import type { Hono } from "hono";
 import { logger } from "hono/logger";
-import { ErrorHandler } from "./error-handler";
-import { JWTAuthMiddleware } from "./libs/auth";
-import type { AppEnv } from "./types";
+import { JWTAuthMiddleware } from "./libs/auth/middlewares";
+import { ErrorHandler } from "./libs/error";
+import { AppEnv } from "./types";
 
 export const config = (app: Hono<AppEnv>) => {
   // 日志
@@ -16,7 +16,7 @@ export const config = (app: Hono<AppEnv>) => {
   app.use(
     "/api/*",
     JWTAuthMiddleware({
-      ignorePath: ["/api/health", "/api/login"]
+      ignorePath: ["/api/health", "/api/login", "/api/register"]
     })
   );
 };

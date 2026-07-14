@@ -1,0 +1,4 @@
+interface:
+  display_name: "Write Project Docs"
+  short_description: "Write accurate docs from project context"
+  default_prompt: "Use $write-project-docs to analyze the selected project scope and write accurate documentation."

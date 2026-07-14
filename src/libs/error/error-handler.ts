@@ -1,6 +1,6 @@
 import { HTTPException } from "hono/http-exception";
-import { ApiRes } from "./endpoints/rest";
-import { AppContext } from "./types";
+import { ApiRes } from "../../endpoints/rest";
+import { AppContext } from "../../types";
 
 export const ErrorHandler = () => (err: Error, c: AppContext) => {
   if (err instanceof HTTPException) {

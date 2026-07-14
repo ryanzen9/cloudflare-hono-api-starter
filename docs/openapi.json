@@ -161,6 +161,168 @@
         }
       }
     },
+    "/api/register": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Register a new user",
+        "operationId": "post_Register",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "minLength": 8,
+                    "description": "The username for the new user. Must be at least 8 characters long.",
+                    "example": "testuser"
+                  },
+                  "password": {
+                    "type": "string",
+                    "minLength": 8,
+                    "description": "The password for the new user. Must be at least 8 characters long.",
+                    "example": "testpassword"
+                  },
+                  "name": {
+                    "type": "string",
+                    "description": "The name of the user",
+                    "example": "John Doe"
+                  },
+                  "age": {
+                    "type": "number",
+                    "description": "The age of the user",
+                    "example": 30
+                  },
+                  "email": {
+                    "type": "string",
+                    "description": "The email of the user",
+                    "example": "user@example.com"
+                  }
+                },
+                "required": [
+                  "username",
+                  "password",
+                  "name",
+                  "age",
+                  "email"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userId": {
+                          "type": "number"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "token": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "userId",
+                        "username",
+                        "token"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "userId": {
+                          "type": "number"
+                        },
+                        "username": {
+                          "type": "string"
+                        },
+                        "token": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "userId",
+                        "username",
+                        "token"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
@@ -385,176 +547,6 @@
                   "required": [
                     "success",
                     "message"
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "Users"
-        ],
-        "summary": "Create a new User",
-        "operationId": "post_UserCreate",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "description": "The name of the user",
-                    "example": "John Doe"
-                  },
-                  "age": {
-                    "type": "number",
-                    "description": "The age of the user",
-                    "example": 30
-                  },
-                  "email": {
-                    "type": "string",
-                    "description": "The email of the user",
-                    "example": "user@example.com"
-                  }
-                },
-                "required": [
-                  "name",
-                  "age",
-                  "email"
-                ]
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "Request successful",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "number",
-                          "description": "The unique identifier of the user",
-                          "example": 1
-                        },
-                        "name": {
-                          "type": "string",
-                          "description": "The name of the user",
-                          "example": "John Doe"
-                        },
-                        "age": {
-                          "type": "number",
-                          "description": "The age of the user",
-                          "example": 30
-                        },
-                        "email": {
-                          "type": "string",
-                          "description": "The email of the user",
-                          "example": "user@example.com"
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "name",
-                        "age",
-                        "email"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
-                }
-              }
-            }
-          },
-          "201": {
-            "description": "Resource created",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "id": {
-                          "type": "number",
-                          "description": "The unique identifier of the user",
-                          "example": 1
-                        },
-                        "name": {
-                          "type": "string",
-                          "description": "The name of the user",
-                          "example": "John Doe"
-                        },
-                        "age": {
-                          "type": "number",
-                          "description": "The age of the user",
-                          "example": 30
-                        },
-                        "email": {
-                          "type": "string",
-                          "description": "The email of the user",
-                          "example": "user@example.com"
-                        }
-                      },
-                      "required": [
-                        "id",
-                        "name",
-                        "age",
-                        "email"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "error": {
-                      "type": "object",
-                      "properties": {
-                        "message": {
-                          "type": "string"
-                        }
-                      },
-                      "required": [
-                        "message"
-                      ]
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "error"
                   ]
                 }
               }
@@ -1155,27 +1147,13 @@
         }
       }
     },
-    "/api/users/{id}/delete": {
+    "/api/users/delete": {
       "post": {
         "tags": [
           "Users"
         ],
         "summary": "Delete a User",
         "operationId": "post_UserDelete",
-        "parameters": [
-          {
-            "schema": {
-              "type": "integer",
-              "exclusiveMinimum": 0,
-              "description": "The resource identifier",
-              "example": 1
-            },
-            "required": true,
-            "description": "The resource identifier",
-            "name": "id",
-            "in": "path"
-          }
-        ],
         "responses": {
           "200": {
             "description": "Request successful",
@@ -1549,12 +1527,6 @@
                     "type": "string",
                     "description": "The title of the todo"
                   },
-                  "userId": {
-                    "type": "integer",
-                    "minimum": -9007199254740991,
-                    "maximum": 9007199254740991,
-                    "description": "The ID of the user"
-                  },
                   "description": {
                     "type": [
                       "string",
@@ -1564,8 +1536,7 @@
                   }
                 },
                 "required": [
-                  "title",
-                  "userId"
+                  "title"
                 ]
               }
             }
@@ -2024,12 +1995,6 @@
                     "type": "integer",
                     "minimum": -9007199254740991,
                     "maximum": 9007199254740991
-                  },
-                  "userId": {
-                    "type": "integer",
-                    "minimum": -9007199254740991,
-                    "maximum": 9007199254740991,
-                    "description": "The ID of the user"
                   },
                   "description": {
                     "type": [

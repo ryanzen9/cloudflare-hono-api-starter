@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
 import { UserQueries } from "../../db/queries";
-import { BizError } from "../../errors";
+import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import {
@@ -36,7 +36,7 @@ export class UserUpdate extends OpenAPIRoute {
       userData
     );
 
-    BizError.throwNotFoundIf(!result[0], "User not found");
+    Assert.throwNotFoundIf(!result[0], "User not found");
 
     return c.json(ApiRes.success(userDto.parse(result[0])), 200);
   }

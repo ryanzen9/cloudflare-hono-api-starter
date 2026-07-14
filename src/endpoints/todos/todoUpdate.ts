@@ -1,7 +1,7 @@
 import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
 import { TodoQueries } from "../../db/queries";
-import { BizError } from "../../errors";
+import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import {
@@ -26,6 +26,16 @@ export class TodoUpdate extends OpenAPIRoute {
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
+    const db = getDB(c.env);
+    const userId = c.get("jwtPayload")?.data.userId;
+    Assert.throwUnauthorizedIf(!userId, "Unauthorized");
+
+    const todo = await TodoQueries.findById(db, data.params.id);
+
+    Assert.throwNotFoundIf(!todo, "Todo not found");
+
+    Assert.throwUnauthorizedIf(todo!.userId !== userId, "Unauthorized");
+
     const todoData = updateTodoSchema.parse({
       ...data.body,
       updatedAt: new Date().toISOString()
@@ -36,7 +46,7 @@ export class TodoUpdate extends OpenAPIRoute {
       todoData
     );
 
-    BizError.throwNotFoundIf(!result[0], "Todo not found");
+    Assert.throwNotFoundIf(!result[0], "Todo not found");
 
     return c.json(ApiRes.success(todoDto.parse(result[0])), 200);
   }

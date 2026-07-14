@@ -1,6 +1,6 @@
 ---
 name: prepare-pr
-description: Inspect the current Git branch against its remote base, review all committed and uncommitted changes, assess requirement completion and risks, run project validation, and draft a pull request body from the repository PR template or a bundled fallback. Use when the user asks to prepare, submit, publish, or push a pull request. Never commit or push until the user explicitly confirms the reviewed draft and proposed Git actions.
+description: Inspect the current Git branch against its remote base, review all committed and uncommitted changes, assess requirement completion and risks for the developer, run project validation, and draft a pull request body with a changed-files section from the repository PR template or bundled fallback. Use when the user asks to prepare, submit, publish, or push a pull request. Never commit or push until the user explicitly confirms the reviewed draft and proposed Git actions.
 ---
 
 # Prepare Pull Request
@@ -24,12 +24,15 @@ Prepare a reviewable PR draft first. Treat committing, pushing, and opening a PR
 6. Infer the requested outcome only from available issues, task text, documentation, commits, and code. Map each requirement to evidence and mark it complete, partial, missing, or unverifiable. State assumptions instead of inventing requirements.
 7. Run the repository-mandated validation commands. For this project, follow `AGENTS.md`, including type checking, formatting checks, tests, and build/docs build as applicable. Never apply formatting or other fixes without authorization when the request is only to review and prepare a PR.
 8. Locate a PR template in `.github/pull_request_template.md`, `.github/PULL_REQUEST_TEMPLATE.md`, or `.github/PULL_REQUEST_TEMPLATE/`. Use the matching repository template when present; otherwise load `assets/pull-request-template.md`. Preserve mandatory headings and checklist items; omit template guidance comments from the final draft.
+   - Keep requirement-completion analysis, risks, and review findings in the developer review package. Do not add them to the PR body unless the repository template explicitly requires them.
+   - Populate the PR body's changed-files section from the final comparison scope. List each changed file with its Git status and a concise description; group generated files when a per-file list would be excessively long.
 9. Present one review package containing:
    - Comparison base, branch, upstream, and fetched/cached-ref status.
    - Included commits and local-only changes.
    - Review findings and requirement-completion assessment.
    - Validation commands and results.
    - Proposed PR title and complete PR body in a Markdown block.
+   - Confirm that the PR body includes the reviewed changed-file list and excludes internal requirement and risk analysis unless required by the repository template.
    - Exact proposed next actions: files to stage, commit message if a commit is needed, push destination, and whether PR creation is included.
 10. Stop and request explicit confirmation. Do not interpret an earlier general request to “submit a PR” as confirmation of the generated draft or Git mutations.
 11. After confirmation, perform only the approved actions:

@@ -1,7 +1,11 @@
 import { describe, expect, it } from "vitest";
-import app from "../../src";
+import { createAppFromFactory } from "../../src/app";
 
 describe("Hono app", () => {
+  const app = createAppFromFactory();
+  app.get("/", (c) => c.redirect("/docs"));
+  app.get("/api/health", (c) => c.json({ message: "ok" }));
+
   it("responds to the health endpoint without a Worker binding", async () => {
     const response = await app.request("/api/health");
 

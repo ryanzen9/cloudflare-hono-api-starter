@@ -33,8 +33,8 @@ bun run test:watch
 
 - 不依赖 Worker Binding 的 Hono 路由或纯逻辑测试：`test/unit/`
 - 依赖 Worker Binding、D1 或完整 API 流程的测试：`test/integration/<resource>/`
-- 类型安全的 Hono 测试应用工厂：`test/app.ts`
 - 公共请求辅助方法：`test/request.ts`
+- 随机测试数据辅助方法：`test/utils.ts`
 - 测试环境初始化：`test/setup.ts`
 
 测试代码使用 `test/tsconfig.json` 进行类型检查。
@@ -45,9 +45,13 @@ bun run test:watch
 
 ```typescript
 import { describe, expect, it } from "vitest";
-import app from "../../src";
+import { createAppFromFactory } from "../../src/app";
 
 describe("Hono app", () => {
+  const app = createAppFromFactory();
+  app.get("/", (c) => c.redirect("/docs"));
+  app.get("/api/health", (c) => c.json({ message: "ok" }));
+
   it("responds to the health endpoint without a Worker binding", async () => {
     const response = await app.request("/api/health");
 
@@ -64,28 +68,42 @@ describe("Hono app", () => {
 });
 ```
 
-需要验证中间件 Binding 和上下文变量时，使用 `test/app.ts` 提供的 `createApp()` 创建带有 `AppEnv` 类型的独立 Hono 实例，并在 `app.request()` 的第三个参数中传入测试 Binding：
+## App 工厂
+
+`src/app.ts` 使用 Hono `createFactory()` 创建应用，调用工厂方法初始化 app 对象。
 
 ```typescript
-// test/app.ts
-import { Hono } from "hono";
-import { AppEnv } from "../src/types";
+// src/app.ts
+export function createAppFromFactory(
+  initApp?: (app: Hono<AppEnv>) => void,
+): Hono<AppEnv> {
+  return createFactory({
+    initApp,
+  }).createApp();
+}
 
-export const createApp = () => new Hono<AppEnv>();
+export function createOpenApiFromFactory(
+  app: Hono<AppEnv>,
+  options?: RouterOptions,
+) {
+  return fromHono(app, options);
+}
 ```
 
-JWT 中间件单元测试通过该工厂注册待测试的中间件和临时路由。当前覆盖以下行为：
+两个工厂只负责应用初始化和 OpenAPI 适配，不会自动注册根路径、健康检查或业务端点。测试应根据验证范围注册所需路由，避免加载不相关接口。
 
-- 合法 JWT 可以正常放行
-- 非法 Bearer token 返回 `401`
-- 忽略路径仅进行精确匹配
+需要验证生产应用配置、Binding 和上下文变量时，可以通过 `createAppFromFactory()` 创建应用，并在 `app.request()` 的第三个参数中传入测试 Binding。
 
 ```typescript
-const app = createApp();
-app.use("/api/*", JWTAuthMiddleware({ ignorePath: ["/api/login"] }));
+const app = createAppFromFactory((app) => {
+  app.use("/api/*", JWTAuthMiddleware({ ignorePath: ["/api/login"] }));
+});
+
 app.get("/api/protected", (c) =>
   c.json({ ok: true, jwtPayload: c.get("jwtPayload") }),
 );
+app.get("/api/login", (c) => c.json({ ignored: true }));
+app.get("/api/login/extra", (c) => c.json({ ignored: false }));
 const token = await sign({ sub: "1" }, JWT_SECRET, "HS256");
 
 const response = await app.request(
@@ -101,9 +119,12 @@ expect(await response.json()).toMatchObject({
   ok: true,
   jwtPayload: { sub: "1" },
 });
+
+expect((await app.request("/api/login")).status).toBe(200);
+expect((await app.request("/api/login/extra")).status).toBe(401);
 ```
 
-## Worker 和 D1 集成测试
+## D1 集成
 
 `vitest.config.ts` 使用 `cloudflareTest()` 加载 `wrangler.jsonc`，并通过 `TEST_MIGRATIONS` 向隔离的测试数据库提供迁移文件：
 
@@ -142,15 +163,21 @@ beforeAll(async () => {
 });
 ```
 
+依赖 D1 的注册、登录和资源准备必须放在集成测试的 `beforeAll()` 或具体测试用例中，不要在 `describe()` 的测试收集阶段发送请求。这样可以保证 `test/setup.ts` 注册的迁移钩子先完成数据库初始化。
+
 不要使用本地开发 D1 数据库运行自动化测试。
+
+当前认证数据存储在 D1 的 `auth_table`。隔离测试数据库不会预置固定账号，因此每个集成测试组需要先注册随机用户，再使用相同凭据登录。
 
 ## 请求辅助方法
 
 `test/request.ts` 提供以下公共方法：
 
 - `request()`：通过 `exports.default.fetch()` 请求完整 Worker，不自动添加认证信息
-- `requestWithEnv()`：通过 `app.request()` 请求应用，并传入 `DB`、`JWT_SECRET`
-- `login()`：使用测试账号登录并返回登录响应
+- `requestWithEnv()`：直接调用生产 Hono 应用的 `request()`，并传入 `DB`、`JWT_SECRET`
+- `genInitUser()`：生成包含随机用户名、密码和邮箱的注册数据
+- `registerUser()`：调用 `/api/register` 注册测试用户
+- `login(user)`：使用传入的用户名和密码调用 `/api/login`
 - `jsonHeaders`：通用 JSON 请求头
 
 普通请求通过合法 URL 构造 `Request`，再交给 Worker 默认导出处理：
@@ -160,45 +187,98 @@ export const request = (path: string, init?: RequestInit) =>
   exports.default.fetch(new Request(`https://example.com${path}`, init));
 ```
 
-## 集成测试
-
-当前 User 和 Todo 集成测试会在测试组开始时调用 `login()`，取得 JWT 后为后续请求统一构造 `Authorization` 请求头：
+随机注册数据由 `test/utils.ts` 生成，避免不同测试组之间出现用户名或邮箱冲突：
 
 ```typescript
-describe("User API", async () => {
-  const loginResponse = await login();
-  expect(loginResponse.status).toBe(201);
-
-  const loginData: ApiSuccess<{ token: string }> = await loginResponse.json();
-  expect(loginData.success).toBe(true);
-
-  const headers = {
-    ...jsonHeaders,
-    Authorization: `Bearer ${loginData.data.token}`,
-  };
-
-  it("creates, queries, updates, and deletes a user", async () => {
-    const createResponse = await request("/api/users", {
-      method: "POST",
-      headers,
-      body: JSON.stringify({
-        name: "Test User",
-        age: 30,
-        email: "test-user@example.com",
-      }),
-    });
-
-    expect(createResponse.status).toBe(201);
-  });
+export const genInitUser = () => ({
+  username: randomUsername(),
+  password: randomPassword(),
+  name: "Random User",
+  age: 30,
+  email: randomEmail(),
 });
 ```
 
-Todo 集成测试同样使用登录 JWT。查询当前用户的 Todo 时，请求当前路由 `/api/users/todos`，用户身份由 JWT 中的 `jwtPayload.data.userId` 提供，不再通过路径参数传递：
+`requestWithEnv()` 复用 `src/index.ts` 默认导出的生产 Hono 应用，因此测试和 Worker 入口使用同一套路由声明；它不会调用 Worker 默认导出的 `fetch()`：
 
 ```typescript
-const userTodosResponse = await request("/api/users/todos", {
-  headers,
+import app from "../src";
+
+export const requestWithEnv = (path: string, init?: RequestInit) =>
+  app.request(path, init, {
+    DB: env.DB,
+    JWT_SECRET: env.JWT_SECRET,
+  });
+```
+
+新增或调整 API 路由时，只需维护 `src/index.ts` 中的端点声明。需要验证完整 Worker 入口时使用 `request()`；只需要直接调用 Hono 应用并显式传入 Binding 时使用 `requestWithEnv()`。
+
+## 集成测试
+
+当前 User 和 Todo 集成测试通过以下顺序准备认证环境：
+
+1. 使用 `genInitUser()` 生成随机注册数据。
+2. 调用 `registerUser()`，确认注册接口返回 `201`。
+3. 使用相同凭据调用 `login()`，确认登录接口返回 `201`。
+4. 从登录响应中取得 JWT，为后续请求构造 `Authorization` 请求头。
+
+这些异步操作放在测试组的 `beforeAll()` 中，确保 D1 迁移已经应用，并让同组测试复用同一个认证上下文：
+
+```typescript
+let headers: Record<string, string>;
+
+beforeAll(async () => {
+  const user = genInitUser();
+
+  const registerResponse = await registerUser(user);
+  expect(registerResponse.status).toBe(201);
+
+  const loginResponse = await login(user);
+  expect(loginResponse.status).toBe(201);
+
+  const loginData: ApiSuccess<{ token: string }> = await loginResponse.json();
+
+  headers = {
+    ...jsonHeaders,
+    Authorization: `Bearer ${loginData.data.token}`,
+  };
+});
+```
+
+User 集成测试随后使用该请求头验证创建、详情、更新和删除流程。Todo 集成测试还会保存登录响应中的 `userId`，并使用该 ID 创建 Todo：
+
+```typescript
+let userId: number;
+
+beforeAll(async () => {
+  const user = genInitUser();
+
+  const registerResponse = await registerUser(user);
+  expect(registerResponse.status).toBe(201);
+
+  const loginResponse = await login(user);
+  expect(loginResponse.status).toBe(201);
+
+  const loginData: ApiSuccess<{
+    userId: number;
+    username: string;
+    token: string;
+  }> = await loginResponse.json();
+
+  userId = loginData.data.userId;
+  headers = {
+    ...jsonHeaders,
+    Authorization: `Bearer ${loginData.data.token}`,
+  };
 });
 
-expect(userTodosResponse.status).toBe(200);
+const createTodoResponse = await request("/api/todos", {
+  method: "POST",
+  headers,
+  body: JSON.stringify({
+    title: "Test todo",
+    description: "Created by a Worker test",
+    userId,
+  }),
+});
 ```
