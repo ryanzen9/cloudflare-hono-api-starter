@@ -2,7 +2,12 @@ import { eq, sql } from "drizzle-orm";
 import { Assert } from "../libs/error";
 import { hashPassword, verifyPassword } from "../libs/utils";
 import { getDB } from "./dao";
-import { authTable, todosTable, usersTable } from "./schema";
+import {
+  authTable,
+  todoAttachmentsTable,
+  todosTable,
+  usersTable
+} from "./schema";
 
 // D1 环境下不支持开启 Begin Commit 等事务操作，因此这里不导出 transaction 方法。
 // 可以通过使用批量语句 `batch` 进行原子操作。
@@ -218,8 +223,20 @@ export class TodoQueries {
    * @param id todo ID。
    * @returns 匹配的 todo 记录；todo 不存在时返回 undefined。
    */
-  static findById(db: Database, id: number) {
-    return db.select().from(todosTable).where(eq(todosTable.id, id)).get();
+  static async findById(db: Database, id: number) {
+    const todo = await db
+      .select()
+      .from(todosTable)
+      .where(eq(todosTable.id, id))
+      .get();
+    const todoAttachments = await db
+      .select()
+      .from(todoAttachmentsTable)
+      .where(eq(todoAttachmentsTable.todoId, id));
+    if (todo) {
+      return { ...todo, attachments: todoAttachments };
+    }
+    return undefined;
   }
 
   /**
@@ -227,8 +244,34 @@ export class TodoQueries {
    * @param todo 待写入的 todo 数据。
    * @returns 新创建的 todo 记录数组。
    */
-  static create(db: Database, todo: typeof todosTable.$inferInsert) {
-    return db.insert(todosTable).values(todo).returning();
+  static async create(
+    db: Database,
+    todo: typeof todosTable.$inferInsert & {
+      attachments?: Omit<typeof todoAttachmentsTable.$inferInsert, "todoId">[];
+    }
+  ) {
+    Assert.throwBadRequestIf(!todo, "Todo data is required");
+    const insertedTodo = await db.insert(todosTable).values(todo).returning();
+    Assert.throwBadRequestIf(
+      !insertedTodo || insertedTodo.length === 0,
+      "Failed to create todo"
+    );
+
+    const attachmentsWithTodoId = (todo.attachments || []).map(
+      (attachment) => ({
+        ...attachment,
+        todoId: insertedTodo[0]!.id
+      })
+    );
+
+    if (attachmentsWithTodoId.length > 0) {
+      await db
+        .insert(todoAttachmentsTable)
+        .values(attachmentsWithTodoId)
+        .returning();
+    }
+
+    return insertedTodo;
   }
 
   /**
@@ -237,16 +280,56 @@ export class TodoQueries {
    * @param todo 要更新的 todo 字段。
    * @returns 更新后的 todo 记录数组；todo 不存在时为空数组。
    */
-  static updateById(
+  static async updateById(
     db: Database,
     id: number,
-    todo: Partial<typeof todosTable.$inferInsert>
+    todo: Partial<typeof todosTable.$inferInsert> & {
+      attachments?: Omit<typeof todoAttachmentsTable.$inferInsert, "todoId">[];
+    }
   ) {
-    return db
+    const { attachments, ...todoValues } = todo;
+
+    const updateTodoQuery = db
       .update(todosTable)
-      .set(todo)
+      .set(todoValues)
       .where(eq(todosTable.id, id))
       .returning();
+
+    // 没有传 attachments 时，只更新 Todo，不修改现有附件。
+    if (attachments === undefined) {
+      return await updateTodoQuery;
+    }
+
+    const deleteAttachmentsQuery = db
+      .delete(todoAttachmentsTable)
+      .where(eq(todoAttachmentsTable.todoId, id));
+
+    // 明确传入空数组时，删除全部附件。
+    if (attachments.length === 0) {
+      const [updatedRows] = await db.batch([
+        updateTodoQuery,
+        deleteAttachmentsQuery
+      ]);
+
+      return updatedRows;
+    }
+
+    const attachmentsWithTodoId = attachments.map((attachment) => ({
+      ...attachment,
+      todoId: id
+    }));
+
+    const insertAttachmentsQuery = db
+      .insert(todoAttachmentsTable)
+      .values(attachmentsWithTodoId);
+
+    const [updatedRows] = await db.batch([
+      updateTodoQuery,
+      deleteAttachmentsQuery,
+      insertAttachmentsQuery
+    ]);
+
+    return updatedRows;
   }
 
   /**

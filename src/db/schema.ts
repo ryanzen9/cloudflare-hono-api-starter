@@ -43,3 +43,19 @@ export const todosTable = sqliteTable("todos_table", {
 
   ...AuditColumns
 });
+
+export const todoAttachmentsTable = sqliteTable("todo_attachments_table", {
+  todoId: int()
+    .notNull()
+    .references(() => todosTable.id, {
+      onUpdate: "cascade",
+      onDelete: "cascade"
+    }),
+  fileKey: text().notNull(),
+  fileHash: text().notNull(),
+  fileName: text().notNull(),
+  filePath: text().notNull(),
+  fileSize: int().notNull(),
+
+  ...AuditColumns
+});
