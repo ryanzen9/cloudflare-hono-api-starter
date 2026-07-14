@@ -6,14 +6,14 @@ import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { createPageQuerySchema } from "../dto";
 import { ApiRes, ResponseArrayBody } from "../rest";
-import { pageTodoDto } from "../todos/todoDto";
+import { pageTodoVo } from "../todos/todoDto";
 
 export class UserTodoList extends OpenAPIRoute {
   schema = {
     tags: ["Todos"],
     summary: "List Todos by User",
     request: createPageQuerySchema(),
-    responses: ResponseArrayBody(pageTodoDto)
+    responses: ResponseArrayBody(pageTodoVo)
   };
 
   async handle(c: AppContext) {
@@ -41,7 +41,7 @@ export class UserTodoList extends OpenAPIRoute {
     );
 
     return c.json(
-      ApiRes.success(rows.map((row) => pageTodoDto.parse(row))),
+      ApiRes.success(rows.map((row) => pageTodoVo.parse(row))),
       200
     );
   }

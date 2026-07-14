@@ -1,12 +1,3 @@
----
-title: "环境变量"
-date: 2026-07-11
-author: "Ryan Zeng"
-tags: []
-categories: []
-draft: false
----
-
 # 环境变量
 
 ## 运行时

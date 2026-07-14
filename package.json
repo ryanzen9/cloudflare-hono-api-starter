@@ -22,7 +22,9 @@
     "test:watch": "vitest",
     "db:generate": "drizzle-kit generate",
     "db:deploy": "wrangler d1 migrations apply drizzle_example --local",
-    "db:deploy:remote": "wrangler d1 migrations apply drizzle_example --remote"
+    "db:deploy:remote": "wrangler d1 migrations apply drizzle_example --remote",
+    "cf-r2:list": "wrangler r2 buckets list",
+    "cf-r2:create": "wrangler r2 buckets create cloudflare-hono-api-starter"
   },
   "dependencies": {
     "@hono/zod-openapi": "^1.4.0",

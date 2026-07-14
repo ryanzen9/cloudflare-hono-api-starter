@@ -5,6 +5,7 @@ import { authTable, todosTable, usersTable } from "./schema";
 export type User = typeof usersTable.$inferSelect;
 export type Todo = typeof todosTable.$inferInsert;
 export type Auth = typeof authTable.$inferSelect;
+export type TodoAttachment = typeof todosTable.$inferSelect;
 
 export const { createInsertSchema, createSelectSchema, createUpdateSchema } =
   createSchemaFactory({ zodInstance: z });

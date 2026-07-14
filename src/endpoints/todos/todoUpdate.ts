@@ -2,6 +2,12 @@ import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
 import { TodoQueries } from "../../db/queries";
 import { Assert } from "../../libs/error";
+import {
+  getFileHash,
+  getFilePath,
+  getFileSize,
+  getOriginalFileName
+} from "../../libs/oss";
 import { AppContext } from "../../types";
 import { idParamDto } from "../params";
 import {
@@ -10,7 +16,7 @@ import {
   RequestParams,
   ResponseObjectBody
 } from "../rest";
-import { todoDto, updateTodoDto } from "./todoDto";
+import { todoVo, updateTodoDto } from "./todoDto";
 import { updateTodoSchema } from "./todoSchema";
 
 export class TodoUpdate extends OpenAPIRoute {
@@ -21,13 +27,14 @@ export class TodoUpdate extends OpenAPIRoute {
       ...RequestParams(idParamDto),
       ...RequestBody(updateTodoDto)
     },
-    responses: ResponseObjectBody(todoDto)
+    responses: ResponseObjectBody(todoVo)
   };
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
     const db = getDB(c.env);
     const userId = c.get("jwtPayload")?.data.userId;
+
     Assert.throwUnauthorizedIf(!userId, "Unauthorized");
 
     const todo = await TodoQueries.findById(db, data.params.id);
@@ -40,14 +47,44 @@ export class TodoUpdate extends OpenAPIRoute {
       ...data.body,
       updatedAt: new Date().toISOString()
     });
-    const result = await TodoQueries.updateById(
-      getDB(c.env),
-      data.params.id,
-      todoData
-    );
 
-    Assert.throwNotFoundIf(!result[0], "Todo not found");
+    let todoAttachments: (R2Object | null)[] = [];
+    if (data.body.attachments && data.body.attachments.length > 0) {
+      const todoAttachemtsPromise = data.body.attachments?.map((attachment) =>
+        c.env.R2_BUCKET.get(attachment.fileKey)
+      );
 
-    return c.json(ApiRes.success(todoDto.parse(result[0])), 200);
+      todoAttachments = await Promise.all(todoAttachemtsPromise || []);
+    }
+
+    const attachmentsInserted = data.body.attachments
+      ?.map((attachment) => {
+        const ossObj = todoAttachments.find(
+          (att) => att?.key === attachment.fileKey
+        );
+        if (!ossObj) return;
+
+        return {
+          fileKey: attachment.fileKey,
+          fileName: getOriginalFileName(ossObj),
+          filePath: getFilePath(ossObj),
+          fileSize: getFileSize(ossObj),
+          fileHash: getFileHash(ossObj),
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
+      })
+      .filter((attachment) => attachment !== undefined);
+
+    const updatedRows = await TodoQueries.updateById(db, data.params.id, {
+      ...todoData,
+      attachments: attachmentsInserted
+    });
+
+    Assert.throwNotFoundIf(!updatedRows[0], "Todo not found");
+
+    const result = await TodoQueries.findById(db, data.params.id);
+
+    return c.json(ApiRes.success(todoVo.parse(result)), 200);
   }
 }

@@ -1,12 +1,3 @@
----
-title: "认证"
-date: 2026-07-11
-author: "Ryan Zeng"
-tags: []
-categories: []
-draft: false
----
-
 # 认证
 
 项目使用 Hono 中间件进行认证，同时在 `/src/libs/auth/middlewares` 下封装认证中间件。项目默认认证方式为 Jwt 认证。除公开路径外，访问 `/api/*` 时都需要在 `Authorization` 请求头中携带有效凭证。
@@ -73,9 +64,16 @@ JWT payload 的结构如下：
 ```typescript
 app.use(
   "/api/*",
-  JWTAuthMiddleware({
-    ignorePath: ["/api/health", "/api/login"],
-  }),
+  except(
+    [
+      "/api/health",
+      "/api/login",
+      "/api/register",
+      "/api/download/:key",
+      "/api/callback",
+    ],
+    JWTAuthMiddleware(),
+  ),
 );
 ```
 

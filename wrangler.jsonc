@@ -22,6 +22,13 @@
       "database_id": "7e5b39c0-e9bb-4bab-b6c9-6d00d38f978a",
       "migrations_dir": "drizzle"
     }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2_BUCKET",
+      "bucket_name": "cloudflare-hono-api-starter"
+      //   "remote": true
+    }
   ]
   /**
    * Smart Placement

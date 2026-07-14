@@ -2,6 +2,8 @@ import { createAppFromFactory, createOpenApiFromFactory } from "./app";
 import { config } from "./config";
 import { Login } from "./endpoints/auth/login";
 import { Register } from "./endpoints/auth/register";
+import { Download } from "./endpoints/oss/download";
+import { Upload } from "./endpoints/oss/upload";
 import { TodoCreate } from "./endpoints/todos/todoCreate";
 import { TodoDelete } from "./endpoints/todos/todoDelete";
 import { TodoDetail } from "./endpoints/todos/todoDetail";
@@ -37,6 +39,9 @@ openapi.registry.registerComponent("securitySchemes", "bearerAuth", {
 
 openapi.post("/api/login", Login);
 openapi.post("/api/register", Register);
+
+openapi.get("/api/download/:key", Download);
+openapi.post("/api/upload", Upload);
 
 openapi.get("/api/users", UserList);
 openapi.get("/api/users/todos", UserTodoList);

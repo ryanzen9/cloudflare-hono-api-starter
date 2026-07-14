@@ -1,12 +1,3 @@
----
-title: "测试"
-date: 2026-07-11
-author: "Ryan Zeng"
-tags: []
-categories: []
-draft: false
----
-
 # 测试
 
 测试使用 Vitest 和 `@cloudflare/vitest-pool-workers`，在 Cloudflare Workers Runtime 中运行。详情请参阅 Hono 的 [Testing 章节](https://hono.dev/docs/guides/testing) 和 Cloudflare Workers 的 [Vitest 集成文档](https://developers.cloudflare.com/workers/testing/vitest-integration/)。
@@ -96,7 +87,7 @@ export function createOpenApiFromFactory(
 
 ```typescript
 const app = createAppFromFactory((app) => {
-  app.use("/api/*", JWTAuthMiddleware({ ignorePath: ["/api/login"] }));
+  app.use("/api/*", JWTAuthMiddleware());
 });
 
 app.get("/api/protected", (c) =>

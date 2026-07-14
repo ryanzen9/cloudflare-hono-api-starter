@@ -1,26 +1,33 @@
 import { todosTable } from "../../db/schema";
 import { createSelectSchema } from "../../db/zod";
-import { insertTodoSchema } from "./todoSchema";
+import {
+  insertTodoAttachmentSchema,
+  insertTodoSchema,
+  selectTodoAttachmentSchema
+} from "./todoSchema";
 
-export const createTodoDto = insertTodoSchema.omit({
-  completed: true,
-  completedAt: true,
-  scheduleAt: true,
+const todoAttachmentsInsertDto = insertTodoAttachmentSchema.pick({
+  fileKey: true
+});
+
+const todoAttachmentsVo = selectTodoAttachmentSchema.omit({
   createdAt: true,
   updatedAt: true,
-  userId: true
+  todoId: true
 });
 
-export const pageTodoDto = createSelectSchema(todosTable).omit({
-  createdAt: true,
-  updatedAt: true,
-  userId: true
-});
-
-export const todoDto = createSelectSchema(todosTable).omit({
-  createdAt: true,
-  updatedAt: true
-});
+export const createTodoDto = insertTodoSchema
+  .omit({
+    completed: true,
+    completedAt: true,
+    scheduleAt: true,
+    createdAt: true,
+    updatedAt: true,
+    userId: true
+  })
+  .extend({
+    attachments: todoAttachmentsInsertDto.array().optional()
+  });
 
 export const updateTodoDto = insertTodoSchema
   .pick({
@@ -30,4 +37,22 @@ export const updateTodoDto = insertTodoSchema
     scheduleAt: true,
     completedAt: true
   })
+  .extend({
+    attachments: todoAttachmentsInsertDto.array().optional()
+  })
   .partial();
+
+export const pageTodoVo = createSelectSchema(todosTable).omit({
+  createdAt: true,
+  updatedAt: true,
+  userId: true
+});
+
+export const todoVo = createSelectSchema(todosTable)
+  .omit({
+    createdAt: true,
+    updatedAt: true
+  })
+  .extend({
+    attachments: todoAttachmentsVo.array().optional()
+  });

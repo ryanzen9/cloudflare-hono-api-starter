@@ -323,6 +323,199 @@
         }
       }
     },
+    "/api/download/{key}": {
+      "get": {
+        "tags": [
+          "Files"
+        ],
+        "summary": "Download a file from R2",
+        "operationId": "get_Download",
+        "parameters": [
+          {
+            "schema": {
+              "type": "string",
+              "description": "The key of the file to download"
+            },
+            "required": true,
+            "description": "The key of the file to download",
+            "name": "key",
+            "in": "path"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "文件内容",
+            "headers": {
+              "Content-Disposition": {
+                "description": "下载文件名",
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/octet-stream": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/upload": {
+      "post": {
+        "tags": [
+          "Files"
+        ],
+        "summary": "Upload a file to R2",
+        "operationId": "post_Upload",
+        "requestBody": {
+          "description": "文件上传表单",
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "required": [
+                  "file"
+                ],
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "description": "需要上传的文件"
+                  },
+                  "directory": {
+                    "type": "string",
+                    "description": "可选的文件目录",
+                    "example": "avatars"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Request successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "etag": {
+                          "type": "string"
+                        },
+                        "size": {
+                          "type": "number"
+                        },
+                        "contentType": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "etag",
+                        "size",
+                        "contentType"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "201": {
+            "description": "Resource created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "key": {
+                          "type": "string"
+                        },
+                        "etag": {
+                          "type": "string"
+                        },
+                        "size": {
+                          "type": "number"
+                        },
+                        "contentType": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "key",
+                        "etag",
+                        "size",
+                        "contentType"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "data"
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean"
+                    },
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "error"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/users": {
       "get": {
         "tags": [
@@ -1533,6 +1726,21 @@
                       "null"
                     ],
                     "description": "The description of the todo"
+                  },
+                  "attachments": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fileKey": {
+                          "type": "string",
+                          "description": "The key of the file"
+                        }
+                      },
+                      "required": [
+                        "fileKey"
+                      ]
+                    }
                   }
                 },
                 "required": [
@@ -1544,7 +1752,7 @@
         },
         "responses": {
           "200": {
-            "description": "Query successful",
+            "description": "Request successful",
             "content": {
               "application/json": {
                 "schema": {
@@ -1554,51 +1762,92 @@
                       "type": "boolean"
                     },
                     "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "title": {
-                            "type": "string"
-                          },
-                          "completed": {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
-                          },
-                          "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "scheduleAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "completedAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "id": {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
-                          }
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
                         },
-                        "required": [
-                          "title",
-                          "completed",
-                          "description",
-                          "scheduleAt",
-                          "completedAt",
-                          "id"
-                        ]
-                      }
+                        "completed": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "userId": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "scheduleAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "completedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "id": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "fileKey": {
+                                "type": "string"
+                              },
+                              "fileHash": {
+                                "type": "string"
+                              },
+                              "fileName": {
+                                "type": "string"
+                              },
+                              "filePath": {
+                                "type": "string"
+                              },
+                              "fileSize": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "id": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "fileKey",
+                              "fileHash",
+                              "fileName",
+                              "filePath",
+                              "fileSize",
+                              "id"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "completed",
+                        "userId",
+                        "description",
+                        "scheduleAt",
+                        "completedAt",
+                        "id"
+                      ]
                     }
                   },
                   "required": [
@@ -1620,100 +1869,97 @@
                       "type": "boolean"
                     },
                     "data": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "title": {
-                            "type": "string"
-                          },
-                          "completed": {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
-                          },
-                          "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "scheduleAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "completedAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
-                          },
-                          "id": {
-                            "type": "integer",
-                            "minimum": -9007199254740991,
-                            "maximum": 9007199254740991
-                          }
+                      "type": "object",
+                      "properties": {
+                        "title": {
+                          "type": "string"
                         },
-                        "required": [
-                          "title",
-                          "completed",
-                          "description",
-                          "scheduleAt",
-                          "completedAt",
-                          "id"
-                        ]
-                      }
+                        "completed": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "userId": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "description": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "scheduleAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "completedAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "id": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "fileKey": {
+                                "type": "string"
+                              },
+                              "fileHash": {
+                                "type": "string"
+                              },
+                              "fileName": {
+                                "type": "string"
+                              },
+                              "filePath": {
+                                "type": "string"
+                              },
+                              "fileSize": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "id": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "fileKey",
+                              "fileHash",
+                              "fileName",
+                              "filePath",
+                              "fileSize",
+                              "id"
+                            ]
+                          }
+                        }
+                      },
+                      "required": [
+                        "title",
+                        "completed",
+                        "userId",
+                        "description",
+                        "scheduleAt",
+                        "completedAt",
+                        "id"
+                      ]
                     }
                   },
                   "required": [
                     "success",
                     "data"
-                  ]
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "message"
                   ]
                 }
               }
@@ -1729,38 +1975,21 @@
                     "success": {
                       "type": "boolean"
                     },
-                    "message": {
-                      "type": "string"
+                    "error": {
+                      "type": "object",
+                      "properties": {
+                        "message": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "message"
+                      ]
                     }
                   },
                   "required": [
                     "success",
-                    "message"
-                  ]
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal server error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean"
-                    },
-                    "message": {
-                      "type": "string"
-                    },
-                    "stack": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "success",
-                    "message"
+                    "error"
                   ]
                 }
               }
@@ -1839,6 +2068,44 @@
                           "type": "integer",
                           "minimum": -9007199254740991,
                           "maximum": 9007199254740991
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "fileKey": {
+                                "type": "string"
+                              },
+                              "fileHash": {
+                                "type": "string"
+                              },
+                              "fileName": {
+                                "type": "string"
+                              },
+                              "filePath": {
+                                "type": "string"
+                              },
+                              "fileSize": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "id": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "fileKey",
+                              "fileHash",
+                              "fileName",
+                              "filePath",
+                              "fileSize",
+                              "id"
+                            ]
+                          }
                         }
                       },
                       "required": [
@@ -1908,6 +2175,44 @@
                           "type": "integer",
                           "minimum": -9007199254740991,
                           "maximum": 9007199254740991
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "fileKey": {
+                                "type": "string"
+                              },
+                              "fileHash": {
+                                "type": "string"
+                              },
+                              "fileName": {
+                                "type": "string"
+                              },
+                              "filePath": {
+                                "type": "string"
+                              },
+                              "fileSize": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "id": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "fileKey",
+                              "fileHash",
+                              "fileName",
+                              "filePath",
+                              "fileSize",
+                              "id"
+                            ]
+                          }
                         }
                       },
                       "required": [
@@ -2014,6 +2319,21 @@
                       "string",
                       "null"
                     ]
+                  },
+                  "attachments": {
+                    "type": "array",
+                    "items": {
+                      "type": "object",
+                      "properties": {
+                        "fileKey": {
+                          "type": "string",
+                          "description": "The key of the file"
+                        }
+                      },
+                      "required": [
+                        "fileKey"
+                      ]
+                    }
                   }
                 }
               }
@@ -2069,6 +2389,44 @@
                           "type": "integer",
                           "minimum": -9007199254740991,
                           "maximum": 9007199254740991
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "fileKey": {
+                                "type": "string"
+                              },
+                              "fileHash": {
+                                "type": "string"
+                              },
+                              "fileName": {
+                                "type": "string"
+                              },
+                              "filePath": {
+                                "type": "string"
+                              },
+                              "fileSize": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "id": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "fileKey",
+                              "fileHash",
+                              "fileName",
+                              "filePath",
+                              "fileSize",
+                              "id"
+                            ]
+                          }
                         }
                       },
                       "required": [
@@ -2138,6 +2496,44 @@
                           "type": "integer",
                           "minimum": -9007199254740991,
                           "maximum": 9007199254740991
+                        },
+                        "attachments": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "fileKey": {
+                                "type": "string"
+                              },
+                              "fileHash": {
+                                "type": "string"
+                              },
+                              "fileName": {
+                                "type": "string"
+                              },
+                              "filePath": {
+                                "type": "string"
+                              },
+                              "fileSize": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              },
+                              "id": {
+                                "type": "integer",
+                                "minimum": -9007199254740991,
+                                "maximum": 9007199254740991
+                              }
+                            },
+                            "required": [
+                              "fileKey",
+                              "fileHash",
+                              "fileName",
+                              "filePath",
+                              "fileSize",
+                              "id"
+                            ]
+                          }
                         }
                       },
                       "required": [
