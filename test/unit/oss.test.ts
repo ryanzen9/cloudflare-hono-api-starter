@@ -1,6 +1,6 @@
 import { env } from "cloudflare:workers";
 import { describe, expect, it } from "vitest";
-import { UploadFile } from "../../src/libs/oss";
+import { getOriginalFileName, UploadFile } from "../../src/libs/oss";
 
 describe("OSS 相关测试", () => {
   it("文件上传下载测试", async () => {
@@ -29,5 +29,23 @@ describe("OSS 相关测试", () => {
       const downloadedText = new TextDecoder().decode(downloadedFile);
       expect(downloadedText).toBe("Hello, OSS!");
     }
+  });
+
+  it("优先使用 R2 元数据中的原始文件名", () => {
+    expect(
+      getOriginalFileName({
+        key: "avatars/550e8400-e29b-41d4-a716-446655440000-invoice-2026.pdf",
+        customMetadata: { originalName: "invoice-2026.pdf" }
+      })
+    ).toBe("invoice-2026.pdf");
+  });
+
+  it("缺少原始文件名元数据时只移除 UUID 前缀", () => {
+    expect(
+      getOriginalFileName({
+        key: "avatars/550e8400-e29b-41d4-a716-446655440000-invoice-2026.pdf",
+        customMetadata: {}
+      })
+    ).toBe("invoice-2026.pdf");
   });
 });
