@@ -21,7 +21,7 @@ export class Assert {
     status: ContentfulStatusCode,
     message?: string,
     cause?: unknown
-  ): never | void {
+  ): asserts condition is false {
     if (condition) {
       throw new HTTPException(status, { message, cause });
     }
@@ -34,7 +34,7 @@ export class Assert {
   static throwUnauthorizedIf(
     condition: boolean,
     message?: string
-  ): never | void {
+  ): asserts condition is false {
     if (condition) {
       throw UnauthorizedException(message);
     }
@@ -44,7 +44,10 @@ export class Assert {
     throw NotFoundException(message);
   }
 
-  static throwNotFoundIf(condition: boolean, message?: string): never | void {
+  static throwNotFoundIf(
+    condition: boolean,
+    message?: string
+  ): asserts condition is false {
     if (condition) {
       throw NotFoundException(message);
     }
@@ -54,7 +57,10 @@ export class Assert {
     throw BadRequestException(message);
   }
 
-  static throwBadRequestIf(condition: boolean, message?: string): never | void {
+  static throwBadRequestIf(
+    condition: boolean,
+    message?: string
+  ): asserts condition is false {
     if (condition) {
       throw BadRequestException(message);
     }
@@ -67,7 +73,7 @@ export class Assert {
   static throwInternalServerErrorIf(
     condition: boolean,
     message?: string
-  ): never | void {
+  ): asserts condition is false {
     if (condition) {
       throw InternalServerErrorException(message);
     }
