@@ -69,7 +69,6 @@ app.use(
       "/api/health",
       "/api/login",
       "/api/register",
-      "/api/upload",
       "/api/download/:key",
       "/api/callback",
     ],

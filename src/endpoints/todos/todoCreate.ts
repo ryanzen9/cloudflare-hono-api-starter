@@ -4,7 +4,7 @@ import { TodoQueries } from "../../db/queries";
 
 import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
-import { ApiRes, RequestBody, ResponseArrayBody } from "../rest";
+import { ApiRes, RequestBody, ResponseObjectBody } from "../rest";
 import { createTodoDto, todoVo } from "./todoDto";
 import { insertTodoSchema } from "./todoSchema";
 
@@ -13,7 +13,7 @@ export class TodoCreate extends OpenAPIRoute {
     tags: ["Todos"],
     summary: "Create a new Todo",
     request: RequestBody(createTodoDto),
-    responses: ResponseArrayBody(todoVo)
+    responses: ResponseObjectBody(todoVo)
   };
 
   async handle(c: AppContext) {
