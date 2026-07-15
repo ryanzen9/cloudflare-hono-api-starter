@@ -39,10 +39,10 @@ const agent = useAgent<CounterAgent, CounterState>({
 
 ### Use Chat Agent
 
-需要安装 `@cloudflare/agent-chat` 包，[用于构建聊天用户界面的 React Hook](https://developers.cloudflare.com/agents/communication-channels/chat/chat-agents/)。
+需要安装 `@cloudflare/ai-chat` 包，[用于构建聊天用户界面的 React Hook](https://developers.cloudflare.com/agents/communication-channels/chat/chat-agents/)。
 
 ```bash
-bun add @cloudflare/agent-chat
+bun add @cloudflare/ai-chat
 ```
 
 使用 useAgentChat Hook 进行聊天功能的实现。
