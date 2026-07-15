@@ -1,3 +1,4 @@
-bun run cf-typegen
+bunx wrangler types
 bun run docs
+bunx lint-staged
 bun run check

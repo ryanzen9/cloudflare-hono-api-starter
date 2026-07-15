@@ -44,12 +44,22 @@
     "@types/node": "^25.9.1",
     "drizzle-kit": "^0.31.10",
     "husky": "^9.1.7",
+    "lint-staged": "^17.0.8",
     "oxfmt": "^0.52.0",
     "oxlint": "^1.67.0",
     "typescript": "^7.0.2",
     "vitepress": "^1.6.4",
     "vitest": "^4.1.0",
     "wrangler": "^4.111.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,mjs,cjs}": [
+      "oxfmt",
+      "oxlint"
+    ],
+    "*.{json,jsonc,md,yml,yaml,css,scss,html}": [
+      "oxfmt"
+    ]
   },
   "packageManager": "bun@1.3.13"
 }
