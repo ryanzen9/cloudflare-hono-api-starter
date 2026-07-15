@@ -27,7 +27,9 @@ Cloudflare Hono API Starter
   <img alt="Hono 4" src="https://img.shields.io/badge/Hono-4.x-E36002?style=flat-square&logo=hono&logoColor=white">
   <img alt="Bun 1.3.13" src="https://img.shields.io/badge/Bun-1.3.13-000000?style=flat-square&logo=bun&logoColor=white">
   <img alt="OpenAPI 3.1" src="https://img.shields.io/badge/OpenAPI-3.1-6BA539?style=flat-square&logo=openapiinitiative&logoColor=white">
-  <img alt="Drizzle ORM" src="https://img.shields.io/badge/Drizzle%20ORM-0.45.2-C5F74F?logo=drizzle&logoColor=000000)](https://orm.drizzle.team/">
+  <img alt="Drizzle ORM" src="https://img.shields.io/badge/Drizzle_ORM-0.45.2-C5F74F?style=flat-square&logo=drizzle&logoColor=000000">
+  <img alt="Workers AI" src="https://img.shields.io/badge/Workers_AI-enabled-F38020?style=flat-square&logo=cloudflare&logoColor=white">
+  <img alt="Cloudflare Agents" src="https://img.shields.io/badge/Cloudflare_Agents-enabled-7C3AED?style=flat-square&logo=cloudflare&logoColor=white">
 </p>
 
 <p align="center">
@@ -41,35 +43,41 @@ Cloudflare Hono API Starter
 
 ---
 
-本项目集成 Hono、Chanfana OpenAPI、Drizzle ORM、Cloudflare D1、Vitest Workers 测试与 VitePress 文档站。
+本项目集成 Hono、Chanfana OpenAPI、Drizzle ORM、Cloudflare D1、R2、Workers AI、Cloudflare Agents、Vitest Workers 测试与 VitePress 文档站。
 
-项目提供 Users 与 Todos 示例资源，用于展示从路由、请求校验、OpenAPI 描述、数据访问、统一响应与异常处理，到 D1 迁移、测试和部署的完整开发路径。
+项目提供 Users、Todos、对象存储和 AI Agent 示例，用于展示从路由、请求校验、OpenAPI 描述、数据访问、统一响应与异常处理，到 D1 迁移、Agent 状态、模型流式响应、测试和部署的完整开发路径。
 
 ## 特性
 
 - 基于 Hono 构建 Cloudflare Workers API。
 - 使用 Chanfana 从端点 Schema 生成 OpenAPI 3.1 和 Swagger UI。
-- 使用 Drizzle ORM 管理 D1 Schema、查询与迁移。
-- 使用 Zod、`drizzle-zod` 和 `@hono/zod-openapi` 统一数据校验与接口描述。
+- 使用 Drizzle ORM 进行数据管理。
+- 使用 Zod、`drizzle-zod` 和 `@hono/zod-openapi` 统一数据校验与接口声明。
+- 使用 Cloudflare R2 提供文件上传、下载。
+- 使用 Cloudflare Agents、Durable Objects、RPC 和 WebSocket 构建有状态 Agent。
 - 使用 Vitest 与 `@cloudflare/vitest-pool-workers` 运行 Worker、D1 和中间件测试。
 - 使用 Oxlint、Oxfmt 和 TypeScript 进行代码质量检查。
 - 同时提供运行时 Swagger UI、OpenAPI JSON 和独立的 VitePress 中文文档站。
 
 ## 技术栈
 
-| 层级     | 技术                                      |
-| -------- | ----------------------------------------- |
-| 运行时   | Cloudflare Workers                        |
-| 语言     | TypeScript 7                              |
-| Web 框架 | Hono                                      |
-| OpenAPI  | Chanfana、`@hono/zod-openapi`             |
-| 数据校验 | Zod、`drizzle-zod`                        |
-| ORM      | Drizzle ORM                               |
-| 数据库   | Cloudflare D1（SQLite）                   |
-| 测试     | Vitest、`@cloudflare/vitest-pool-workers` |
-| 文档站   | VitePress                                 |
-| 包管理   | Bun 1.3.13                                |
-| 代码质量 | TypeScript、Oxlint、Oxfmt                 |
+| 层级       | 技术                                              |
+| ---------- | ------------------------------------------------- |
+| 运行时     | Cloudflare Workers                                |
+| 语言       | TypeScript 7                                      |
+| Web 框架   | Hono                                              |
+| OpenAPI    | Chanfana、`@hono/zod-openapi`                     |
+| 数据校验   | Zod、`drizzle-zod`                                |
+| ORM        | Drizzle ORM                                       |
+| 数据库     | Cloudflare D1（SQLite）                           |
+| 对象存储   | Cloudflare R2                                     |
+| AI         | Workers AI、AI SDK、`workers-ai-provider`         |
+| Agent      | Cloudflare Agents、Durable Objects、`hono-agents` |
+| React 示例 | React 19、`@cloudflare/ai-chat`、Bun              |
+| 测试       | Vitest、`@cloudflare/vitest-pool-workers`         |
+| 文档站     | VitePress                                         |
+| 包管理     | Bun 1.3.13                                        |
+| 代码质量   | TypeScript、Oxlint、Oxfmt                         |
 
 ## 快速开始
 
@@ -115,7 +123,29 @@ bun run start
 
 - Swagger UI：<http://localhost:8787/docs>
 - 健康检查：<http://localhost:8787/health>
+- Workers AI 探针：<http://localhost:8787/ai/health>
 - 根路径：<http://localhost:8787/>，会重定向到 `/docs`
+
+## AI 与 Agents
+
+`wrangler.jsonc` 注册了 `CounterAgent`、`ChatAgent` 两个 Durable Object Binding，并通过 `agentsMiddleware()` 将 `/agents/:agent/:name` 请求转发到对应实例：
+
+- `CounterAgent` 演示持久化状态、普通 HTTP 请求和 `@callable()` RPC。
+- `ChatAgent` 基于 `AIChatAgent` 保存会话，调用 `@cf/qwen/qwq-32b` 并返回 UI Message Stream。
+- `GET /ai/health` 直接调用 `@cf/meta/llama-3.2-1b-instruct`，用于检查 Workers AI Binding。
+
+本地启动时，Worker 和 Durable Object Agent 在本地 Workers Runtime 中执行；Workers AI 没有本地模型模拟，项目通过 `remote: true` 连接远程 AI Binding。使用聊天与 AI 探针前，需要先完成 Wrangler 登录，并保证本机可以访问 Cloudflare Remote Binding。
+
+前后端分离示例位于 `examples/agent-react-example/`。启动前复制环境文件，通过 `BUN_PUBLIC_API_ORIGIN` 指定 Worker Origin：
+
+```bash
+cd examples/agent-react-example
+bun install --frozen-lockfile
+cp .env.example .env
+bun run dev
+```
+
+完整的 Binding、Agent 路由、React 接入、测试边界和本地网络排查参见 [AI 与 Agents 指南](docs/guide/ai.md)。
 
 ## 数据库与迁移
 
@@ -137,11 +167,15 @@ bun run test
 测试通过 `@cloudflare/vitest-pool-workers` 在 Workers Runtime 中运行：
 
 - `test/unit/`：不依赖 D1 的 Hono 路由与 JWT 中间件测试。
+- `test/unit/agent.test.ts`：Agent HTTP 路由、RPC 状态和 WebSocket 握手测试。
 - `test/integration/users/`：User 创建、查询、更新和删除流程。
 - `test/integration/todos/`：User 与 Todo 的关联 API 流程。
+- `test/integration/oss/`：R2 文件上传和下载流程。
 - `test/setup.ts`：在隔离的测试 D1 中应用 `TEST_MIGRATIONS`。
 
 自动化测试不会使用本地开发数据库。D1 集成测试通过 `exports.default.fetch()` 调用完整 Worker；不需要 Binding 的单元测试可以直接使用 `app.request()`。
+
+当前 Agent 测试不会调用真实模型，而是验证 HTTP、Durable Object RPC 和 WebSocket 协议边界，避免默认测试套件依赖远程网络、模型配额和非确定性输出。
 
 监听模式：
 
@@ -164,27 +198,6 @@ bun run docs
 ```
 
 输出位置为 `docs/openapi.json`。
-
-### VitePress 文档站
-
-`docs/` 下的中文文档站与 Worker 的 `/docs` Swagger UI 相互独立：
-
-```bash
-bun run docs:dev
-bun run docs:build
-bun run docs:preview
-```
-
-静态构建产物位于 `docs/.vitepress/dist`。详细内容参见：
-
-- [快速开始](docs/guide/getting-started.md)
-- [项目结构](docs/guide/project-structure.md)
-- [本地开发](docs/guide/development.md)
-- [认证](docs/guide/authentication.md)
-- [测试](docs/guide/testing.md)
-- [环境变量](docs/guide/environment-variable.md)
-- [异常处理](docs/guide/error-handling.md)
-- [部署](docs/guide/deployment.md)
 
 ## 常用命令
 
@@ -215,7 +228,7 @@ bun run docs:preview
    bun run login
    ```
 
-2. 在 `wrangler.jsonc` 中确认 Worker 名称、D1 `database_name` 与 `database_id`。
+2. 在 `wrangler.jsonc` 中确认 Worker 名称、D1、R2、AI 和 Durable Object Binding。
 3. 在 Cloudflare 中配置 `JWT_SECRET`。
 4. 如有数据库变更，确认后应用远程迁移：
 

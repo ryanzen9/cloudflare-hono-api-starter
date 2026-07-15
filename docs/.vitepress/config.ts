@@ -32,6 +32,7 @@ export default defineConfig({
             { text: "环境变量", link: "/guide/environment-variable" },
             { text: "异常处理", link: "/guide/error-handling" },
             { text: "对象存储", link: "/guide/oss" },
+            { text: "AI", link: "/guide/ai" }
           ],
         },
       ],
