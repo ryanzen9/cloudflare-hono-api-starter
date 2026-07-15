@@ -114,7 +114,7 @@ bun run start
 默认地址：
 
 - Swagger UI：<http://localhost:8787/docs>
-- 健康检查：<http://localhost:8787/api/health>
+- 健康检查：<http://localhost:8787/health>
 - 根路径：<http://localhost:8787/>，会重定向到 `/docs`
 
 ## 数据库与迁移

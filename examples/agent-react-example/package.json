@@ -9,6 +9,7 @@
     "start": "NODE_ENV=production bun src/index.ts"
   },
   "dependencies": {
+    "@cloudflare/ai-chat": "^0.9.3",
     "agents": "0.17.4",
     "react": "^19",
     "react-dom": "^19"

@@ -41,10 +41,10 @@ import { createAppFromFactory } from "../../src/app";
 describe("Hono app", () => {
   const app = createAppFromFactory();
   app.get("/", (c) => c.redirect("/docs"));
-  app.get("/api/health", (c) => c.json({ message: "ok" }));
+  app.get("/health", (c) => c.json({ message: "ok" }));
 
   it("responds to the health endpoint without a Worker binding", async () => {
-    const response = await app.request("/api/health");
+    const response = await app.request("/health");
 
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({ message: "ok" });

@@ -65,13 +65,7 @@ JWT payload 的结构如下：
 app.use(
   "/api/*",
   except(
-    [
-      "/api/health",
-      "/api/login",
-      "/api/register",
-      "/api/download/:key",
-      "/api/callback",
-    ],
+    ["/api/login", "/api/register", "/api/download/:key", "/api/callback"],
     JWTAuthMiddleware(),
   ),
 );

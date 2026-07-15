@@ -1,4 +1,5 @@
 import CounterWidget from "./Agents";
+import Chat from "./Chat";
 import "./index.css";
 
 import logo from "./logo.svg";
@@ -14,6 +15,7 @@ export function App() {
 
       <h1>Bun + React</h1>
       <CounterWidget></CounterWidget>
+      <Chat></Chat>
       <p>
         Edit <code>src/App.tsx</code> and save to test HMR
       </p>
