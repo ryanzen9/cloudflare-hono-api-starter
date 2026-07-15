@@ -2,6 +2,7 @@ import {
   cloudflareTest,
   readD1Migrations
 } from "@cloudflare/vitest-pool-workers";
+import agents from "agents/vite";
 import { fileURLToPath } from "node:url";
 import { defineConfig } from "vitest/config";
 
@@ -16,7 +17,8 @@ export default defineConfig({
           TEST_MIGRATIONS: await readD1Migrations(migrationsPath)
         }
       }
-    }))
+    })),
+    agents()
   ],
   test: {
     include: ["test/**/*.test.ts"],

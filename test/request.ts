@@ -1,3 +1,7 @@
+import {
+  createExecutionContext,
+  waitOnExecutionContext
+} from "cloudflare:test";
 import { env, exports } from "cloudflare:workers";
 import app from "../src";
 import { randomEmail, randomPassword, randomUsername } from "./utils";
@@ -21,6 +25,13 @@ export const requestWithEnv = (path: string, init?: RequestInit) =>
     DB: env.DB,
     JWT_SECRET: env.JWT_SECRET
   });
+
+export const requestWithFetch = async (request: Request) => {
+  const ctx = createExecutionContext();
+  const response = await app.fetch(request, env, ctx);
+  await waitOnExecutionContext(ctx);
+  return response;
+};
 
 export const registerUser = async (user: {
   username: string;

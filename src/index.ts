@@ -55,4 +55,6 @@ openapi.get("/api/todos/:id", TodoDetail);
 openapi.post("/api/todos/:id", TodoUpdate);
 openapi.post("/api/todos/:id/delete", TodoDelete);
 
+export * from "./agents";
+
 export default app;

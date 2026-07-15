@@ -29,6 +29,20 @@
       "bucket_name": "cloudflare-hono-api-starter"
       //   "remote": true
     }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "CounterAgent",
+        "class_name": "CounterAgent"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["CounterAgent"]
+    }
   ]
   /**
    * Smart Placement
