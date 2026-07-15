@@ -8,7 +8,7 @@ bun run start
 
 Wrangler 会启动本地 Workers 开发服务器。修改 `src/` 后会自动热重载；Swagger 页面刷新即可看到变更。
 
-- API 与健康检查：`http://localhost:8787/api/health`
+- API 与健康检查：`http://localhost:8787/health`
 - Swagger UI：`http://localhost:8787/docs`（根路径 `/` 会重定向到此处）
 
 ## 生成 OpenAPI 文件
@@ -59,5 +59,5 @@ bun run check
 bun run docs:dev
 ```
 
-文档源码在 `docs/` 下，配置在 `docs/.vitepress/config.ts`。  
+文档源码在 `docs/` 下，配置在 `docs/.vitepress/config.ts`。
 `docs/.agents/` 为内部 Agent 资料，不会出现在公开站点导航中。

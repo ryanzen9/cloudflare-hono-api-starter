@@ -11,7 +11,7 @@ bun run start
 然后打开：
 
 - Swagger UI：`http://localhost:8787/docs`
-- 健康检查：`http://localhost:8787/api/health`
+- 健康检查：`http://localhost:8787/health`
 
 根路径 `/` 会 302 重定向到 `/docs`。
 

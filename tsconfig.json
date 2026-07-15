@@ -1,4 +1,6 @@
 {
+  "extends": "agents/tsconfig",
+
   "compilerOptions": {
     /* Base Options: */
     "esModuleInterop": true,
@@ -16,6 +18,7 @@
     "lib": ["esnext"],
     "types": ["./worker-configuration.d.ts", "@types/node", "node"]
   },
+
   "exclude": ["node_modules", "dist", "tests"],
   "include": ["src", "worker-configuration.d.ts"]
 }

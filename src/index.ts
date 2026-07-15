@@ -1,5 +1,6 @@
 import { createAppFromFactory, createOpenApiFromFactory } from "./app";
 import { config } from "./config";
+import { AIHealth } from "./endpoints/ai/health";
 import { Login } from "./endpoints/auth/login";
 import { Register } from "./endpoints/auth/register";
 import { Download } from "./endpoints/oss/download";
@@ -19,7 +20,8 @@ const packageJson = await import("../package.json");
 
 const app = createAppFromFactory(config);
 app.get("/", (c) => c.redirect("/docs"));
-app.get("/api/health", (c) => c.json({ message: "ok" }));
+app.get("/health", (c) => c.json({ message: "ok" }));
+app.get("/ai/health", AIHealth);
 
 const openapi = createOpenApiFromFactory(app, {
   docs_url: "/docs",
@@ -54,5 +56,7 @@ openapi.post("/api/todos", TodoCreate);
 openapi.get("/api/todos/:id", TodoDetail);
 openapi.post("/api/todos/:id", TodoUpdate);
 openapi.post("/api/todos/:id/delete", TodoDelete);
+
+export * from "./agents";
 
 export default app;
