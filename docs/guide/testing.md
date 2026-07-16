@@ -66,16 +66,16 @@ describe("Hono app", () => {
 ```typescript
 // src/app.ts
 export function createAppFromFactory(
-  initApp?: (app: Hono<AppEnv>) => void,
+  initApp?: (app: Hono<AppEnv>) => void
 ): Hono<AppEnv> {
   return createFactory({
-    initApp,
+    initApp
   }).createApp();
 }
 
 export function createOpenApiFromFactory(
   app: Hono<AppEnv>,
-  options?: RouterOptions,
+  options?: RouterOptions
 ) {
   return fromHono(app, options);
 }
@@ -91,7 +91,7 @@ const app = createAppFromFactory((app) => {
 });
 
 app.get("/api/protected", (c) =>
-  c.json({ ok: true, jwtPayload: c.get("jwtPayload") }),
+  c.json({ ok: true, jwtPayload: c.get("jwtPayload") })
 );
 app.get("/api/login", (c) => c.json({ ignored: true }));
 app.get("/api/login/extra", (c) => c.json({ ignored: false }));
@@ -101,14 +101,14 @@ const response = await app.request(
   "/api/protected",
   { headers: { Authorization: `Bearer ${token}` } },
   {
-    JWT_SECRET,
-  } as Env,
+    JWT_SECRET
+  } as Env
 );
 
 expect(response.status).toBe(200);
 expect(await response.json()).toMatchObject({
   ok: true,
-  jwtPayload: { sub: "1" },
+  jwtPayload: { sub: "1" }
 });
 
 expect((await app.request("/api/login")).status).toBe(200);
@@ -126,15 +126,15 @@ export default defineConfig({
       wrangler: { configPath: "./wrangler.jsonc" },
       miniflare: {
         bindings: {
-          TEST_MIGRATIONS: await readD1Migrations(migrationsPath),
-        },
-      },
-    })),
+          TEST_MIGRATIONS: await readD1Migrations(migrationsPath)
+        }
+      }
+    }))
   ],
   test: {
     include: ["test/**/*.test.ts"],
-    setupFiles: ["./test/setup.ts"],
-  },
+    setupFiles: ["./test/setup.ts"]
+  }
 });
 ```
 
@@ -186,7 +186,7 @@ export const genInitUser = () => ({
   password: randomPassword(),
   name: "Random User",
   age: 30,
-  email: randomEmail(),
+  email: randomEmail()
 });
 ```
 
@@ -198,7 +198,7 @@ import app from "../src";
 export const requestWithEnv = (path: string, init?: RequestInit) =>
   app.request(path, init, {
     DB: env.DB,
-    JWT_SECRET: env.JWT_SECRET,
+    JWT_SECRET: env.JWT_SECRET
   });
 ```
 
@@ -231,7 +231,7 @@ beforeAll(async () => {
 
   headers = {
     ...jsonHeaders,
-    Authorization: `Bearer ${loginData.data.token}`,
+    Authorization: `Bearer ${loginData.data.token}`
   };
 });
 ```
@@ -259,7 +259,7 @@ beforeAll(async () => {
   userId = loginData.data.userId;
   headers = {
     ...jsonHeaders,
-    Authorization: `Bearer ${loginData.data.token}`,
+    Authorization: `Bearer ${loginData.data.token}`
   };
 });
 
@@ -269,7 +269,7 @@ const createTodoResponse = await request("/api/todos", {
   body: JSON.stringify({
     title: "Test todo",
     description: "Created by a Worker test",
-    userId,
-  }),
+    userId
+  })
 });
 ```

@@ -23,9 +23,7 @@
   "paths": {
     "/api/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Login a user",
         "operationId": "post_Login",
         "requestBody": {
@@ -43,10 +41,7 @@
                     "minLength": 1
                   }
                 },
-                "required": [
-                  "username",
-                  "password"
-                ]
+                "required": ["username", "password"]
               }
             }
           }
@@ -75,17 +70,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "userId",
-                        "username",
-                        "token"
-                      ]
+                      "required": ["userId", "username", "token"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -113,17 +101,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "userId",
-                        "username",
-                        "token"
-                      ]
+                      "required": ["userId", "username", "token"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -145,15 +126,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }
@@ -163,9 +139,7 @@
     },
     "/api/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Register a new user",
         "operationId": "post_Register",
         "requestBody": {
@@ -202,13 +176,7 @@
                     "example": "user@example.com"
                   }
                 },
-                "required": [
-                  "username",
-                  "password",
-                  "name",
-                  "age",
-                  "email"
-                ]
+                "required": ["username", "password", "name", "age", "email"]
               }
             }
           }
@@ -237,17 +205,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "userId",
-                        "username",
-                        "token"
-                      ]
+                      "required": ["userId", "username", "token"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -275,17 +236,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "userId",
-                        "username",
-                        "token"
-                      ]
+                      "required": ["userId", "username", "token"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -307,15 +261,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }
@@ -325,9 +274,7 @@
     },
     "/api/download/{key}": {
       "get": {
-        "tags": [
-          "Files"
-        ],
+        "tags": ["Files"],
         "summary": "Download a file from R2",
         "operationId": "get_Download",
         "parameters": [
@@ -367,9 +314,7 @@
     },
     "/api/upload": {
       "post": {
-        "tags": [
-          "Files"
-        ],
+        "tags": ["Files"],
         "summary": "Upload a file to R2",
         "operationId": "post_Upload",
         "requestBody": {
@@ -379,9 +324,7 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "file"
-                ],
+                "required": ["file"],
                 "properties": {
                   "file": {
                     "type": "string",
@@ -425,18 +368,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "key",
-                        "etag",
-                        "size",
-                        "contentType"
-                      ]
+                      "required": ["key", "etag", "size", "contentType"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -467,18 +402,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "key",
-                        "etag",
-                        "size",
-                        "contentType"
-                      ]
+                      "required": ["key", "etag", "size", "contentType"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -500,15 +427,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }
@@ -518,9 +440,7 @@
     },
     "/api/users": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "List Users",
         "operationId": "get_UserList",
         "parameters": [
@@ -584,19 +504,11 @@
                             "example": "user@example.com"
                           }
                         },
-                        "required": [
-                          "id",
-                          "name",
-                          "age",
-                          "email"
-                        ]
+                        "required": ["id", "name", "age", "email"]
                       }
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -637,19 +549,11 @@
                             "example": "user@example.com"
                           }
                         },
-                        "required": [
-                          "id",
-                          "name",
-                          "age",
-                          "email"
-                        ]
+                        "required": ["id", "name", "age", "email"]
                       }
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -668,10 +572,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -690,10 +591,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -712,10 +610,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -737,10 +632,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -750,9 +642,7 @@
     },
     "/api/users/todos": {
       "get": {
-        "tags": [
-          "Todos"
-        ],
+        "tags": ["Todos"],
         "summary": "List Todos by User",
         "operationId": "get_UserTodoList",
         "parameters": [
@@ -804,22 +694,13 @@
                             "maximum": 9007199254740991
                           },
                           "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "scheduleAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "completedAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "id": {
                             "type": "integer",
@@ -838,10 +719,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -870,22 +748,13 @@
                             "maximum": 9007199254740991
                           },
                           "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "scheduleAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "completedAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "id": {
                             "type": "integer",
@@ -904,10 +773,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -926,10 +792,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -948,10 +811,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -970,10 +830,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -995,10 +852,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -1008,9 +862,7 @@
     },
     "/api/users/{id}": {
       "get": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Get a User by ID",
         "operationId": "get_UserDetail",
         "parameters": [
@@ -1062,18 +914,10 @@
                           "example": "user@example.com"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name",
-                        "age",
-                        "email"
-                      ]
+                      "required": ["id", "name", "age", "email"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1112,18 +956,10 @@
                           "example": "user@example.com"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name",
-                        "age",
-                        "email"
-                      ]
+                      "required": ["id", "name", "age", "email"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1145,15 +981,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }
@@ -1161,9 +992,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Update a User",
         "operationId": "post_UserUpdate",
         "parameters": [
@@ -1241,18 +1070,10 @@
                           "example": "user@example.com"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name",
-                        "age",
-                        "email"
-                      ]
+                      "required": ["id", "name", "age", "email"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1291,18 +1112,10 @@
                           "example": "user@example.com"
                         }
                       },
-                      "required": [
-                        "id",
-                        "name",
-                        "age",
-                        "email"
-                      ]
+                      "required": ["id", "name", "age", "email"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1324,15 +1137,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }
@@ -1342,9 +1150,7 @@
     },
     "/api/users/delete": {
       "post": {
-        "tags": [
-          "Users"
-        ],
+        "tags": ["Users"],
         "summary": "Delete a User",
         "operationId": "post_UserDelete",
         "responses": {
@@ -1368,15 +1174,10 @@
                           "example": 1
                         }
                       },
-                      "required": [
-                        "id"
-                      ]
+                      "required": ["id"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1401,15 +1202,10 @@
                           "example": 1
                         }
                       },
-                      "required": [
-                        "id"
-                      ]
+                      "required": ["id"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1431,15 +1227,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }
@@ -1449,9 +1240,7 @@
     },
     "/api/todos": {
       "get": {
-        "tags": [
-          "Todos"
-        ],
+        "tags": ["Todos"],
         "summary": "List Todos",
         "operationId": "get_TodoList",
         "parameters": [
@@ -1503,22 +1292,13 @@
                             "maximum": 9007199254740991
                           },
                           "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "scheduleAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "completedAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "id": {
                             "type": "integer",
@@ -1537,10 +1317,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1569,22 +1346,13 @@
                             "maximum": 9007199254740991
                           },
                           "description": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "scheduleAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "completedAt": {
-                            "type": [
-                              "string",
-                              "null"
-                            ]
+                            "type": ["string", "null"]
                           },
                           "id": {
                             "type": "integer",
@@ -1603,10 +1371,7 @@
                       }
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1625,10 +1390,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -1647,10 +1409,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -1669,10 +1428,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -1694,10 +1450,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "success",
-                    "message"
-                  ]
+                  "required": ["success", "message"]
                 }
               }
             }
@@ -1705,9 +1458,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Todos"
-        ],
+        "tags": ["Todos"],
         "summary": "Create a new Todo",
         "operationId": "post_TodoCreate",
         "requestBody": {
@@ -1721,10 +1472,7 @@
                     "description": "The title of the todo"
                   },
                   "description": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
+                    "type": ["string", "null"],
                     "description": "The description of the todo"
                   },
                   "attachments": {
@@ -1737,15 +1485,11 @@
                           "description": "The key of the file"
                         }
                       },
-                      "required": [
-                        "fileKey"
-                      ]
+                      "required": ["fileKey"]
                     }
                   }
                 },
-                "required": [
-                  "title"
-                ]
+                "required": ["title"]
               }
             }
           }
@@ -1778,22 +1522,13 @@
                           "maximum": 9007199254740991
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "scheduleAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "completedAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "id": {
                           "type": "integer",
@@ -1850,10 +1585,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1885,22 +1617,13 @@
                           "maximum": 9007199254740991
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "scheduleAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "completedAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "id": {
                           "type": "integer",
@@ -1957,10 +1680,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -1982,15 +1702,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }
@@ -2000,9 +1715,7 @@
     },
     "/api/todos/{id}": {
       "get": {
-        "tags": [
-          "Todos"
-        ],
+        "tags": ["Todos"],
         "summary": "Get a Todo by ID",
         "operationId": "get_TodoDetail",
         "parameters": [
@@ -2047,22 +1760,13 @@
                           "maximum": 9007199254740991
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "scheduleAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "completedAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "id": {
                           "type": "integer",
@@ -2119,10 +1823,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -2154,22 +1855,13 @@
                           "maximum": 9007199254740991
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "scheduleAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "completedAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "id": {
                           "type": "integer",
@@ -2226,10 +1918,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -2251,15 +1940,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }
@@ -2267,9 +1951,7 @@
         }
       },
       "post": {
-        "tags": [
-          "Todos"
-        ],
+        "tags": ["Todos"],
         "summary": "Update a Todo",
         "operationId": "post_TodoUpdate",
         "parameters": [
@@ -2302,23 +1984,14 @@
                     "maximum": 9007199254740991
                   },
                   "description": {
-                    "type": [
-                      "string",
-                      "null"
-                    ],
+                    "type": ["string", "null"],
                     "description": "The description of the todo"
                   },
                   "scheduleAt": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": ["string", "null"]
                   },
                   "completedAt": {
-                    "type": [
-                      "string",
-                      "null"
-                    ]
+                    "type": ["string", "null"]
                   },
                   "attachments": {
                     "type": "array",
@@ -2330,9 +2003,7 @@
                           "description": "The key of the file"
                         }
                       },
-                      "required": [
-                        "fileKey"
-                      ]
+                      "required": ["fileKey"]
                     }
                   }
                 }
@@ -2368,22 +2039,13 @@
                           "maximum": 9007199254740991
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "scheduleAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "completedAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "id": {
                           "type": "integer",
@@ -2440,10 +2102,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -2475,22 +2134,13 @@
                           "maximum": 9007199254740991
                         },
                         "description": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "scheduleAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "completedAt": {
-                          "type": [
-                            "string",
-                            "null"
-                          ]
+                          "type": ["string", "null"]
                         },
                         "id": {
                           "type": "integer",
@@ -2547,10 +2197,7 @@
                       ]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -2572,15 +2219,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }
@@ -2590,9 +2232,7 @@
     },
     "/api/todos/{id}/delete": {
       "post": {
-        "tags": [
-          "Todos"
-        ],
+        "tags": ["Todos"],
         "summary": "Delete a Todo",
         "operationId": "post_TodoDelete",
         "parameters": [
@@ -2630,15 +2270,10 @@
                           "example": 1
                         }
                       },
-                      "required": [
-                        "id"
-                      ]
+                      "required": ["id"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -2663,15 +2298,10 @@
                           "example": 1
                         }
                       },
-                      "required": [
-                        "id"
-                      ]
+                      "required": ["id"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "data"
-                  ]
+                  "required": ["success", "data"]
                 }
               }
             }
@@ -2693,15 +2323,10 @@
                           "type": "string"
                         }
                       },
-                      "required": [
-                        "message"
-                      ]
+                      "required": ["message"]
                     }
                   },
-                  "required": [
-                    "success",
-                    "error"
-                  ]
+                  "required": ["success", "error"]
                 }
               }
             }

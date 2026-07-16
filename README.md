@@ -55,6 +55,7 @@ Cloudflare Hono API Starter
 - 使用 Zod、`drizzle-zod` 和 `@hono/zod-openapi` 统一数据校验与接口声明。
 - 使用 Cloudflare R2 提供文件上传、下载。
 - 使用 Cloudflare Agents、Durable Objects、RPC 和 WebSocket 构建有状态 Agent。
+- 集成 Cloudflare Workflow 工作流。
 - 使用 Vitest 与 `@cloudflare/vitest-pool-workers` 运行 Worker、D1 和中间件测试。
 - 使用 Oxlint、Oxfmt 和 TypeScript 进行代码质量检查。
 - 同时提供运行时 Swagger UI、OpenAPI JSON 和独立的 VitePress 中文文档站。
@@ -72,6 +73,7 @@ Cloudflare Hono API Starter
 | 数据库     | Cloudflare D1（SQLite）                           |
 | 对象存储   | Cloudflare R2                                     |
 | AI         | Workers AI、AI SDK、`workers-ai-provider`         |
+| Workflow   | Cloudflare Workflow                               |
 | Agent      | Cloudflare Agents、Durable Objects、`hono-agents` |
 | React 示例 | React 19、`@cloudflare/ai-chat`、Bun              |
 | 测试       | Vitest、`@cloudflare/vitest-pool-workers`         |

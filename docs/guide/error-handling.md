@@ -16,7 +16,7 @@ export const BadRequestException = (message = "Bad Request") =>
   new HTTPException(400, { message });
 
 export const InternalServerErrorException = (
-  message = "Internal Server Error",
+  message = "Internal Server Error"
 ) => new HTTPException(500, { message });
 ```
 
@@ -93,7 +93,7 @@ export class Assert {
   static throw(
     status: ContentfulStatusCode,
     message?: string,
-    cause?: unknown,
+    cause?: unknown
   ): never {
     throw new HTTPException(status, { message, cause });
   }
@@ -102,7 +102,7 @@ export class Assert {
     condition: boolean,
     status: ContentfulStatusCode,
     message?: string,
-    cause?: unknown,
+    cause?: unknown
   ): asserts condition is false {
     if (condition) {
       throw new HTTPException(status, { message, cause });
@@ -115,7 +115,7 @@ export class Assert {
 
   static throwUnauthorizedIf(
     condition: boolean,
-    message?: string,
+    message?: string
   ): asserts condition is false {
     if (condition) {
       throw UnauthorizedException(message);
@@ -128,7 +128,7 @@ export class Assert {
 
   static throwNotFoundIf(
     condition: boolean,
-    message?: string,
+    message?: string
   ): asserts condition is false {
     if (condition) {
       throw NotFoundException(message);
@@ -141,7 +141,7 @@ export class Assert {
 
   static throwBadRequestIf(
     condition: boolean,
-    message?: string,
+    message?: string
   ): asserts condition is false {
     if (condition) {
       throw BadRequestException(message);
@@ -154,7 +154,7 @@ export class Assert {
 
   static throwInternalServerErrorIf(
     condition: boolean,
-    message?: string,
+    message?: string
   ): asserts condition is false {
     if (condition) {
       throw InternalServerErrorException(message);

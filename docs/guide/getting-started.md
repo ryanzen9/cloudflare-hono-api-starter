@@ -41,14 +41,14 @@ bun run deploy
 
 ## 常用命令
 
-| 命令 | 说明 |
-| --- | --- |
-| `bun run start` | 本地启动 Workers API |
-| `bun run deploy` | 部署 API 到 Cloudflare Workers |
-| `bun run test` | 运行 Vitest 测试 |
-| `bun run docs` | 从代码生成 `docs/openapi.json` |
-| `bun run docs:dev` | 本地预览文档站 |
-| `bun run docs:build` | 构建静态文档 |
-| `bun run docs:preview` | 预览构建后的文档站 |
-| `bun run db:generate` | 用 drizzle-kit 生成迁移 |
-| `bun run db:deploy` | 将迁移应用到本地 D1 |
+| 命令                   | 说明                           |
+| ---------------------- | ------------------------------ |
+| `bun run start`        | 本地启动 Workers API           |
+| `bun run deploy`       | 部署 API 到 Cloudflare Workers |
+| `bun run test`         | 运行 Vitest 测试               |
+| `bun run docs`         | 从代码生成 `docs/openapi.json` |
+| `bun run docs:dev`     | 本地预览文档站                 |
+| `bun run docs:build`   | 构建静态文档                   |
+| `bun run docs:preview` | 预览构建后的文档站             |
+| `bun run db:generate`  | 用 drizzle-kit 生成迁移        |
+| `bun run db:deploy`    | 将迁移应用到本地 D1            |

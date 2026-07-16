@@ -66,8 +66,8 @@ app.use(
   "/api/*",
   except(
     ["/api/login", "/api/register", "/api/download/:key", "/api/callback"],
-    JWTAuthMiddleware(),
-  ),
+    JWTAuthMiddleware()
+  )
 );
 ```
 
@@ -90,7 +90,7 @@ const userId = jwtPayload.data.userId;
 
 Assert.throwUnauthorizedIf(
   !userId,
-  "Unauthorized: User ID not found in JWT payload",
+  "Unauthorized: User ID not found in JWT payload"
 );
 ```
 

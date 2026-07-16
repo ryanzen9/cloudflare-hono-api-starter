@@ -69,8 +69,8 @@ wrangler.jsonc                  # AI 与 Durable Object Binding、迁移
 {
   "ai": {
     "binding": "AI",
-    "remote": true,
-  },
+    "remote": true
+  }
 }
 ```
 
@@ -84,24 +84,24 @@ wrangler.jsonc                  # AI 与 Durable Object Binding、迁移
     "bindings": [
       {
         "name": "CounterAgent",
-        "class_name": "CounterAgent",
+        "class_name": "CounterAgent"
       },
       {
         "name": "ChatAgent",
-        "class_name": "ChatAgent",
-      },
-    ],
+        "class_name": "ChatAgent"
+      }
+    ]
   },
   "migrations": [
     {
       "tag": "v1",
-      "new_sqlite_classes": ["CounterAgent"],
+      "new_sqlite_classes": ["CounterAgent"]
     },
     {
       "tag": "v2",
-      "new_sqlite_classes": ["ChatAgent"],
-    },
-  ],
+      "new_sqlite_classes": ["ChatAgent"]
+    }
+  ]
 }
 ```
 
@@ -195,7 +195,7 @@ export class ChatAgent extends AIChatAgent {
 
     const result = streamText({
       model: workersai("@cf/qwen/qwq-32b"),
-      messages: await convertToModelMessages(this.messages),
+      messages: await convertToModelMessages(this.messages)
     });
 
     return result.toUIMessageStreamResponse();
@@ -225,7 +225,7 @@ import { useAgent } from "agents/react";
 const agent = useAgent({
   agent: "chat-agent",
   name: "chat",
-  host: process.env.BUN_PUBLIC_API_ORIGIN,
+  host: process.env.BUN_PUBLIC_API_ORIGIN
 });
 
 const { messages, sendMessage, status } = useAgentChat({ agent });
@@ -259,7 +259,7 @@ BUN_PUBLIC_API_ORIGIN=http://localhost:8787
 export const AIHealth = async (c: AppContext) => {
   const result = await c.env.AI.run("@cf/meta/llama-3.2-1b-instruct", {
     prompt: "Only respond with AI_OK",
-    max_tokens: 20,
+    max_tokens: 20
   });
 
   return c.json(result);

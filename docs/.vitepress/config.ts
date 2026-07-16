@@ -9,13 +9,13 @@ export default defineConfig({
   ignoreDeadLinks: true,
   themeConfig: {
     nav: [
-      {text: "首页", link: "/"},
+      { text: "首页", link: "/" },
       { text: "指南", link: "/guide/getting-started" },
       { text: "API 参考", link: "/api/overview" },
       {
         text: "Swagger",
-        link: "https://api.ryanzeng.xyz/docs",
-      },
+        link: "https://api.ryanzeng.xyz/docs"
+      }
     ],
     sidebar: {
       "/guide/": [
@@ -32,35 +32,36 @@ export default defineConfig({
             { text: "环境变量", link: "/guide/environment-variable" },
             { text: "异常处理", link: "/guide/error-handling" },
             { text: "对象存储", link: "/guide/oss" },
-            { text: "AI", link: "/guide/ai" }
-          ],
-        },
+            { text: "AI", link: "/guide/ai" },
+            { text: "工作流", link: "/guide/workflow" }
+          ]
+        }
       ],
       "/api/": [
         {
           text: "API",
-          items: [{ text: "概览", link: "/api/overview" }],
-        },
-      ],
+          items: [{ text: "概览", link: "/api/overview" }]
+        }
+      ]
     },
     socialLinks: [
       {
         icon: "github",
-        link: "https://github.com/ryanzen9/cloudflare-hono-api-starter",
-      },
+        link: "https://github.com/ryanzen9/cloudflare-hono-api-starter"
+      }
     ],
     search: {
-      provider: "local",
+      provider: "local"
     },
     outline: {
-      label: "本页目录",
+      label: "本页目录"
     },
     docFooter: {
       prev: "上一页",
-      next: "下一页",
+      next: "下一页"
     },
     returnToTopLabel: "回到顶部",
     sidebarMenuLabel: "菜单",
-    darkModeSwitchLabel: "主题",
-  },
+    darkModeSwitchLabel: "主题"
+  }
 });

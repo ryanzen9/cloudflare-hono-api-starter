@@ -14,5 +14,10 @@
     "noEmit": true
   },
   "include": [".vitepress/**/*", "**/*.md", "**/*.ts", "**/*.vue"],
-  "exclude": ["**/openapi.json", "**/.agents/**", ".vitepress/dist", ".vitepress/cache"]
+  "exclude": [
+    "**/openapi.json",
+    "**/.agents/**",
+    ".vitepress/dist",
+    ".vitepress/cache"
+  ]
 }
