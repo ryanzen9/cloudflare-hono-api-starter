@@ -58,5 +58,6 @@ openapi.post("/api/todos/:id", TodoUpdate);
 openapi.post("/api/todos/:id/delete", TodoDelete);
 
 export * from "./agents";
+export * from "./workflows";
 
 export default app;
