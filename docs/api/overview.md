@@ -1,6 +1,6 @@
 # API 参考概览
 
-**权威的交互式文档是 [Swagger UI](https://api.ryanzeng.xyz/docs)**。
+**权威的交互式文档是 [Swagger UI](https://cloudflare-hono-api-starter.rubyceng0326.workers.dev/docs)**。
 
 ## 本地试调
 

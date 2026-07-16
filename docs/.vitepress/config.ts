@@ -14,7 +14,7 @@ export default defineConfig({
       { text: "API 参考", link: "/api/overview" },
       {
         text: "Swagger",
-        link: "https://api.ryanzeng.xyz/docs"
+        link: "https://cloudflare-hono-api-starter.rubyceng0326.workers.dev/docs"
       }
     ],
     sidebar: {
