@@ -14,7 +14,8 @@ export default defineConfig({
       wrangler: { configPath: "./wrangler.jsonc" },
       miniflare: {
         bindings: {
-          TEST_MIGRATIONS: await readD1Migrations(migrationsPath)
+          TEST_MIGRATIONS: await readD1Migrations(migrationsPath),
+          REGISTER_OPEN: true
         }
       }
     })),

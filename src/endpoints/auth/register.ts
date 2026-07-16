@@ -41,6 +41,11 @@ export class Register extends OpenAPIRoute {
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
 
+    Assert.throwBadRequestIf(
+      c.env.REGISTER_OPEN === "false",
+      "目前仅支持 Github Oauth 登录"
+    );
+
     const { username, password, name, age, email } = data.body;
 
     const db = getDB(c.env);

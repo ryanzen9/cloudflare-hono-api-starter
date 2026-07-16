@@ -8,7 +8,8 @@
   "main": "src/index.ts",
   "compatibility_date": "2026-05-25",
   "vars": {
-    "API_ORIGIN": "https://cloudflare-hono-api-starter.rubyceng0326.workers.dev"
+    "API_ORIGIN": "https://cloudflare-hono-api-starter.rubyceng0326.workers.dev",
+    "REGISTER_OPEN": "false"
   },
   "observability": {
     "logs": {
