@@ -77,7 +77,7 @@ Follow the principle of progressive disclosure when working with project instruc
 - Use:
   - `GET` for query operations.
   - `POST` for write operations.
-- Refer to `docs/openapi.json` for the current list of API endpoints.
+- Run `bun run docs`. Refer to `docs/openapi.json` for the current list of API endpoints.
 
 ## Authentication
 
