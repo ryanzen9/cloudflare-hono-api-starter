@@ -37,17 +37,9 @@ export const RequestParams = <T extends z.ZodTypeAny>(data: T) => {
   };
 };
 
-export const RequestQuery = <T extends z.ZodTypeAny>(data: T) => {
-  return {
-    query: {
-      content: {
-        "application/json": {
-          schema: data
-        }
-      }
-    }
-  };
-};
+export const RequestQuery = <T extends z.ZodTypeAny>(data: T) => ({
+  query: data
+});
 
 export const ResponseObjectBody = <T extends z.ZodTypeAny>(data: T) => ({
   "200": {

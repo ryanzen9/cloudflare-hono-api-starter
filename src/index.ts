@@ -26,8 +26,6 @@ app.get("/", (c) => c.redirect("/docs"));
 app.get("/health", (c) => c.json({ message: "ok" }));
 app.get("/ai/health", AIHealth);
 app.get("/trigger/d1-backup", D1BackUpTrigger);
-app.get("/auth/github/login-start", GithubLoginStart);
-app.get("/auth/github/login/callback", GithubLoginCallback);
 
 const openapi = createOpenApiFromFactory(app, {
   docs_url: "/docs",
@@ -47,6 +45,9 @@ openapi.registry.registerComponent("securitySchemes", "bearerAuth", {
 
 openapi.post("/api/login", Login);
 openapi.post("/api/register", Register);
+
+openapi.get("/auth/github/login-start", GithubLoginStart);
+openapi.get("/auth/github/login/callback", GithubLoginCallback);
 
 openapi.get("/api/download/:key", Download);
 openapi.post("/api/upload", Upload);

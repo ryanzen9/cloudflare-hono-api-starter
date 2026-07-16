@@ -10,3 +10,14 @@ export const loginResDto = z.object({
   username: z.string(),
   token: z.string()
 });
+
+export const githubCallbackQueryDto = z.object({
+  code: z.string().openapi({
+    description: "The authorization code returned by GitHub",
+    example: "1234567890abcdef"
+  }),
+  state: z.string().openapi({
+    description: "The state parameter to prevent CSRF attacks",
+    example: "random_state_string"
+  })
+});
