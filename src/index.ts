@@ -10,6 +10,7 @@ import { TodoDelete } from "./endpoints/todos/todoDelete";
 import { TodoDetail } from "./endpoints/todos/todoDetail";
 import { TodoList } from "./endpoints/todos/todoList";
 import { TodoUpdate } from "./endpoints/todos/todoUpdate";
+import { D1BackUpTrigger } from "./endpoints/trigger/d1-backup";
 import { UserDelete } from "./endpoints/users/userDelete";
 import { UserDetail } from "./endpoints/users/userDetail";
 import { UserList } from "./endpoints/users/userList";
@@ -22,6 +23,7 @@ const app = createAppFromFactory(config);
 app.get("/", (c) => c.redirect("/docs"));
 app.get("/health", (c) => c.json({ message: "ok" }));
 app.get("/ai/health", AIHealth);
+app.get("/trigger/d1-backup", D1BackUpTrigger);
 
 const openapi = createOpenApiFromFactory(app, {
   docs_url: "/docs",

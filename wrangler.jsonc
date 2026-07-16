@@ -66,8 +66,7 @@
     {
       "name": "D1_Backup_WorkerFlow",
       "binding": "D1_BACKUP_WF",
-      "class_name": "D1BackupWorkflow",
-      "schedules": ["0 0 * * *"]
+      "class_name": "D1BackupWorkflow"
     }
   ]
   /**

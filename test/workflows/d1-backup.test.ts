@@ -3,6 +3,7 @@ import { env } from "cloudflare:workers";
 import { describe, expect, it } from "vitest";
 import { getDB } from "../../src/db/dao";
 import { usersTable } from "../../src/db/schema";
+import { request } from "../request";
 
 interface BackupData {
   id: string;
@@ -65,5 +66,16 @@ describe("D1BackupWorkflow", () => {
         })
       ])
     );
+  });
+
+  it("request trigger endpoint starts a workflow instance", async () => {
+    const response = await request("/trigger/d1-backup");
+    expect(response.status).toBe(201);
+
+    const res = (await response.json()) as any;
+    expect(res).toHaveProperty("success", true);
+    expect(res.data).toHaveProperty("instanceId");
+    expect(res.data).toHaveProperty("created", true);
+    expect(res.data).toHaveProperty("createdAt");
   });
 });
