@@ -18,11 +18,12 @@ export const OAuthTransactionsSchema = z.object({
 
   redirectTo: z.string().nonempty(),
   expiresAt: z.string().nonempty(),
-  consumedAt: z.string().optional(),
 
-  resolvedUserId: z.number().int().optional(),
   exchangeCodeHash: z.string().optional(),
   exchangedAt: z.string().optional(),
+
+  consumedAt: z.string().optional(),
+  resolvedUserId: z.number().int().optional(),
 
   createdAt: z.string().nonempty(),
   updatedAt: z.string().nonempty()

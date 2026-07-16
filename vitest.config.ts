@@ -15,7 +15,7 @@ export default defineConfig({
       miniflare: {
         bindings: {
           TEST_MIGRATIONS: await readD1Migrations(migrationsPath),
-          REGISTER_OPEN: true
+          REGISTER_OPEN: "true"
         }
       }
     })),

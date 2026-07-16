@@ -12,7 +12,7 @@ export class GithubLoginStart extends OpenAPIRoute {
     tags: ["Auth"],
     summary: "Login a user With Github OAuth",
     responses: {
-      304: {
+      302: {
         description: "Redirect to Github OAuth login page"
       }
     }

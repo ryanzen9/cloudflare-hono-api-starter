@@ -49,7 +49,7 @@ export class Login extends OpenAPIRoute {
     const result = loginResDto.parse({
       token,
       userId: user!.id,
-      username: auth!.username
+      username: user!.name
     });
 
     return c.json(ApiRes.success(result), 201);

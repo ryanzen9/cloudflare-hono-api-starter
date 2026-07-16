@@ -4,7 +4,7 @@ import {
   getOAuthTransactions
 } from "../../db/cache";
 import { getDB } from "../../db/dao";
-import { AuthQueries } from "../../db/queries";
+import { AuthQueries, UserQueries } from "../../db/queries";
 import { JwtPayload, jwtSign } from "../../libs/auth/jwt";
 import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
@@ -42,6 +42,10 @@ export class GithubLoginCallback extends OpenAPIRoute {
 
     if (!transaction) {
       Assert.throwBadRequest("Invalid or expired OAuth state");
+    }
+
+    if (new Date(transaction.expiresAt) < new Date()) {
+      Assert.throwBadRequest("OAuth transaction has expired");
     }
 
     await exchangeOAuthTransactions(c.env, state, code);
@@ -119,8 +123,14 @@ export class GithubLoginCallback extends OpenAPIRoute {
       email
     });
 
+    const user = await UserQueries.findById(db, auth?.userId || 0);
+
     if (!auth) {
       Assert.throwBadRequest("Failed to login or register user with GitHub");
+    }
+
+    if (!user) {
+      Assert.throwBadRequest("User not found after GitHub login");
     }
 
     const payload: JwtPayload = {
@@ -128,8 +138,8 @@ export class GithubLoginCallback extends OpenAPIRoute {
       iat: Math.floor(Date.now() / 1000),
       exp: Math.floor(Date.now() / 1000) + 60 * 60,
       data: {
-        userId: auth.id,
-        username: githubUser.login
+        userId: user.id,
+        username: user.name
       }
     };
 
@@ -138,8 +148,8 @@ export class GithubLoginCallback extends OpenAPIRoute {
 
     const result = loginResDto.parse({
       token,
-      userId: auth.id,
-      username: githubUser.login
+      userId: user.id,
+      username: user.name
     });
 
     return c.json(ApiRes.success(result), 201);
