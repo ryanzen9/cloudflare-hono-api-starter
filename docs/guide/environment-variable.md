@@ -57,7 +57,7 @@ async handle(c: AppContext) {
 Using secrets defined in .dev.vars
 Your Worker has access to the following bindings:
 Binding                                         Resource                  Mode
-env.DB (drizzle_example)                        D1 Database               local
+env.DB                                          D1 Database               local
 env.JWT_SECRET ("(hidden)")                     Environment Variable      local
 
 ╭───────────────────────────────────────────────────────────────────────────────────────────────────────────────╮

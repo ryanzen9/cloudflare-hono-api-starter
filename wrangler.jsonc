@@ -31,8 +31,8 @@
   "d1_databases": [
     {
       "binding": "DB",
-      "database_name": "drizzle_example",
-      "database_id": "7e5b39c0-e9bb-4bab-b6c9-6d00d38f978a",
+      "database_name": "cloudflare-hono-api-starter",
+      "database_id": "1fc266ce-e30b-4838-b7fa-507e9beeeb58",
       "migrations_dir": "drizzle"
     }
   ],
