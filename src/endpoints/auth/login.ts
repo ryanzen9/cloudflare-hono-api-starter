@@ -2,22 +2,11 @@ import { OpenAPIRoute } from "chanfana";
 import { getDB } from "../../db/dao";
 import { AuthQueries, UserQueries } from "../../db/queries";
 
-import { z } from "zod";
 import { JwtPayload, jwtSign } from "../../libs/auth/jwt";
 import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { ApiRes, RequestBody, ResponseObjectBody } from "../rest";
-
-const loginDto = z.object({
-  username: z.string().min(1),
-  password: z.string().min(1)
-});
-
-const loginResDto = z.object({
-  userId: z.number(),
-  username: z.string(),
-  token: z.string()
-});
+import { loginDto, loginResDto } from "./loginDto";
 
 export class Login extends OpenAPIRoute {
   schema = {

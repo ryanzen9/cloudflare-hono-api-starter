@@ -7,6 +7,9 @@
   "name": "cloudflare-hono-api-starter",
   "main": "src/index.ts",
   "compatibility_date": "2026-05-25",
+  "vars": {
+    "API_ORIGIN": "https://cloudflare-hono-api-starter.rubyceng0326.workers.dev"
+  },
   "observability": {
     "logs": {
       "enabled": true,
@@ -19,7 +22,7 @@
   "upload_source_maps": true,
   "compatibility_flags": ["nodejs_compat"],
   "secrets": {
-    "required": ["JWT_SECRET"]
+    "required": ["JWT_SECRET", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"]
   },
   "ai": {
     "binding": "AI",
@@ -67,6 +70,12 @@
       "name": "D1_Backup_WorkerFlow",
       "binding": "D1_BACKUP_WF",
       "class_name": "D1BackupWorkflow"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "94fae7175ca5428186e724f971378e5a"
     }
   ]
   /**

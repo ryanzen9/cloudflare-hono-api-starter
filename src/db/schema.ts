@@ -8,8 +8,9 @@ const AuditColumns = {
 
 export const usersTable = sqliteTable("users_table", {
   name: text().notNull(),
-  age: int().notNull(),
+  age: int(),
   email: text().notNull().unique(),
+  avatarUrl: text(),
 
   ...AuditColumns
 });
@@ -23,6 +24,21 @@ export const authTable = sqliteTable("auth_table", {
     }),
   username: text().notNull().unique(),
   password: text().notNull(),
+
+  ...AuditColumns
+});
+
+export const oauthAccountsTable = sqliteTable("oauth_accounts_table", {
+  userId: int()
+    .notNull()
+    .references(() => usersTable.id, {
+      onUpdate: "cascade",
+      onDelete: "cascade"
+    }),
+  provider: text().notNull(),
+  providerSubject: text().notNull(),
+  providerLogin: text().notNull(),
+  providerEmail: text(),
 
   ...AuditColumns
 });

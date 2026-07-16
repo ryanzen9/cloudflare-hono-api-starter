@@ -32,7 +32,7 @@ export const config = (app: Hono<AppEnv>) => {
   app.use(
     "/api/*",
     except(
-      ["/api/login", "/api/register", "/api/download/:key", "/api/callback"],
+      ["/api/login", "/api/register", "/api/download/:key"],
       JWTAuthMiddleware()
     )
   );

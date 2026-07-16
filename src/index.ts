@@ -1,6 +1,8 @@
 import { createAppFromFactory, createOpenApiFromFactory } from "./app";
 import { config } from "./config";
 import { AIHealth } from "./endpoints/ai/health";
+import { GithubLoginCallback } from "./endpoints/auth/github-login-callback";
+import { GithubLoginStart } from "./endpoints/auth/github-login-start";
 import { Login } from "./endpoints/auth/login";
 import { Register } from "./endpoints/auth/register";
 import { Download } from "./endpoints/oss/download";
@@ -24,6 +26,8 @@ app.get("/", (c) => c.redirect("/docs"));
 app.get("/health", (c) => c.json({ message: "ok" }));
 app.get("/ai/health", AIHealth);
 app.get("/trigger/d1-backup", D1BackUpTrigger);
+app.get("/auth/github/login-start", GithubLoginStart);
+app.get("/auth/github/login/callback", GithubLoginCallback);
 
 const openapi = createOpenApiFromFactory(app, {
   docs_url: "/docs",

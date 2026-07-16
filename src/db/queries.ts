@@ -1,9 +1,10 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import { Assert } from "../libs/error";
 import { hashPassword, verifyPassword } from "../libs/utils";
 import { getDB } from "./dao";
 import {
   authTable,
+  oauthAccountsTable,
   todoAttachmentsTable,
   todosTable,
   usersTable
@@ -15,6 +16,68 @@ type Database = Omit<ReturnType<typeof getDB>, "transaction">;
 
 /** 认证相关的数据访问操作。 */
 export class AuthQueries {
+  static async loginWithGithub(
+    db: Database,
+    githubUser: {
+      id: number;
+      login: string;
+      name: string | null;
+      email: string | null;
+      avatar_url: string;
+    }
+  ) {
+    // 查询是否已存在用户
+    const existingOAuthAccount = await db
+      .select()
+      .from(oauthAccountsTable)
+      .where(
+        and(
+          eq(oauthAccountsTable.provider, "github"),
+          eq(oauthAccountsTable.providerSubject, githubUser.id.toString())
+        )
+      )
+      .get();
+
+    if (existingOAuthAccount) {
+      // 更新后返回
+      const row = await db
+        .update(oauthAccountsTable)
+        .set({
+          providerLogin: githubUser.login,
+          providerEmail: githubUser.email,
+          updatedAt: new Date().toISOString()
+        })
+        .where(eq(oauthAccountsTable.id, existingOAuthAccount.id))
+        .returning();
+      return row[0];
+    } else {
+      const user = await db
+        .insert(usersTable)
+        .values({
+          name: githubUser.name || githubUser.login,
+          email: githubUser.email!,
+          avatarUrl: githubUser.avatar_url,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        })
+        .returning();
+
+      const row = await db
+        .insert(oauthAccountsTable)
+        .values({
+          userId: user[0]!.id, // 使用刚插入的用户 ID
+          provider: "github",
+          providerSubject: githubUser.id.toString(),
+          providerLogin: githubUser.login,
+          providerEmail: githubUser.email,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        })
+        .returning();
+      return row[0];
+    }
+  }
+
   /**
    * 注册
    * @param data 用户信息。
