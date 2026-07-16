@@ -25,5 +25,4 @@ features:
     details: 类型安全的 Schema 与查询层，迁移由 drizzle-kit 生成，集中管理 CRUD。
   - title: AI 与 Agents
     details: 集成 Cloudflare Agents、以及 AI Agents 框架，助力快速编写自己的 AI Agent。
-  - title: 可测可维护
 ---
