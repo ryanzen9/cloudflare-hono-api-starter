@@ -1,6 +1,7 @@
 import { Link } from "react-router";
 
-const apiOrigin = "http://localhost:8787";
+const apiOrigin =
+  "https://cloudflare-hono-api-starter.rubyceng0326.workers.dev";
 
 export function LoginPage() {
   const loginUrl = `${apiOrigin}/auth/github/login`;
