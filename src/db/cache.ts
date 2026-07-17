@@ -1,5 +1,18 @@
 import { OAuthTransactions, OAuthTransactionsSchema } from "./zod";
 
+export const setFrontendRedirectUrl = (
+  env: Env,
+  key: string,
+  redirectUrl: string
+) => {
+  return env.KV.put(`oauth_redirect_url:${key}`, redirectUrl);
+};
+
+export const getFrontendRedirectUrl = async (env: Env, key: string) => {
+  const value = await env.KV.get(`oauth_redirect_url:${key}`);
+  return value || null;
+};
+
 export const setOAuthTransactions = (
   env: Env,
   key: string,

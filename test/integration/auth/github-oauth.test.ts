@@ -13,17 +13,6 @@ import { GithubAuthMiddlewares } from "../../../src/libs/auth/oauth/github";
 import { createCodeChallenge } from "../../../src/libs/auth/oauth/github/crypto";
 import { genInitUser, registerUser } from "../../request";
 
-interface ApiSuccess<T> {
-  success: true;
-  data: T;
-}
-
-interface LoginResult {
-  userId: number;
-  username: string;
-  token: string;
-}
-
 afterEach(() => {
   vi.restoreAllMocks();
 });
@@ -199,16 +188,22 @@ describe("GitHub OAuth API", () => {
       { redirect: "manual" }
     );
 
-    expect(response.status).toBe(201);
+    expect(response.status).toBe(302);
+    const cookies = response.headers.getSetCookie() || [];
+    const authCookie = cookies.find((cookie) => cookie.startsWith("auth="));
+    expect(authCookie).toBeDefined();
+    expect(authCookie).toContain("auth=");
 
-    const result = (await response.json()) as ApiSuccess<LoginResult>;
+    const autoStr = authCookie!.split("=")[1]?.split(";")[0];
+    const auth = JSON.parse(decodeURIComponent(autoStr!));
 
-    expect(result.data.username).toBe("GitHub Test User");
-    expect(result.data.token).toEqual(expect.any(String));
+    const token = auth?.token;
+    expect(token).toBeDefined();
+    expect(auth?.userId).toBeDefined();
 
-    const claims = await jwtVerify(result.data.token, env.JWT_SECRET);
+    const claims = await jwtVerify(token, env.JWT_SECRET);
     expect(claims.data.username).toBe("GitHub Test User");
-    expect(claims.data.userId).toBe(result.data.userId);
+    expect(claims.data.userId).toBe(auth?.userId);
 
     const tokenRequest = outboundRequests.find(
       (request) => new URL(request.url).pathname === "/login/oauth/access_token"
@@ -247,7 +242,7 @@ describe("GitHub OAuth API", () => {
       providerEmail: "github-user@example.com"
     });
 
-    expect(result.data.userId).toBe(oauthAccount!.userId);
+    expect(auth?.userId).toBe(oauthAccount!.userId);
   });
 
   it("rejects an unknown state without calling GitHub", async () => {
@@ -257,14 +252,11 @@ describe("GitHub OAuth API", () => {
       "/auth/github/login?code=test-code&state=unknown-state"
     );
 
-    expect(response.status).toBe(400);
-    expect(fetchSpy).not.toHaveBeenCalled();
+    expect(response.status).toBe(302);
+    expect(response.headers.get("location")).toContain(`error=`);
 
-    await expect(response.json()).resolves.toMatchObject({
-      success: false,
-      error: {
-        message: "Invalid or expired OAuth state"
-      }
-    });
+    const message = response.headers.get("location")?.split("error=")[1];
+    expect(message).toContain("Invalid%20or%20expired%20OAuth%20state");
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });

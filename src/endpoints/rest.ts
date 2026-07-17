@@ -43,12 +43,12 @@ export const RequestQuery = <T extends z.ZodTypeAny>(data: T) => ({
 
 export const ResponseObjectBody = <T extends z.ZodTypeAny>(data: T) => ({
   "200": {
-    description: "Request successful",
+    description: "Query successful",
     content: {
       "application/json": {
         schema: z.object({
           success: z.boolean(),
-          data
+          data: z.array<T>(data)
         })
       }
     }
@@ -59,7 +59,29 @@ export const ResponseObjectBody = <T extends z.ZodTypeAny>(data: T) => ({
       "application/json": {
         schema: z.object({
           success: z.boolean(),
-          data
+          data: z.array<T>(data) || z.object<T>(data)
+        })
+      }
+    }
+  },
+  "400": {
+    description: "Bad request",
+    content: {
+      "application/json": {
+        schema: z.object({
+          success: z.boolean(),
+          message: z.string()
+        })
+      }
+    }
+  },
+  "401": {
+    description: "Unauthorized",
+    content: {
+      "application/json": {
+        schema: z.object({
+          success: z.boolean(),
+          message: z.string()
         })
       }
     }
@@ -70,7 +92,19 @@ export const ResponseObjectBody = <T extends z.ZodTypeAny>(data: T) => ({
       "application/json": {
         schema: z.object({
           success: z.boolean(),
-          error: z.object({ message: z.string() })
+          message: z.string()
+        })
+      }
+    }
+  },
+  "500": {
+    description: "Internal server error",
+    content: {
+      "application/json": {
+        schema: z.object({
+          success: z.boolean(),
+          message: z.string(),
+          stack: z.string().optional()
         })
       }
     }

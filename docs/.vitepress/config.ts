@@ -33,7 +33,8 @@ export default defineConfig({
             { text: "异常处理", link: "/guide/error-handling" },
             { text: "对象存储", link: "/guide/oss" },
             { text: "AI", link: "/guide/ai" },
-            { text: "工作流", link: "/guide/workflow" }
+            { text: "工作流", link: "/guide/workflow" },
+            { text: "OAuth", link: "/guide/oauth" }
           ]
         }
       ],
