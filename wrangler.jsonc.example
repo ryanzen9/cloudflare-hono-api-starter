@@ -1,0 +1,109 @@
+/**
+ * For more details on how to configure Wrangler, refer to:
+ * https://developers.cloudflare.com/workers/wrangler/configuration/
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "[项目名称]",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-05-25",
+  "vars": {
+    "API_ORIGIN": "[公网 api 地址，回调使用]",
+    "REGISTER_OPEN": "[是否开放注册，true/false]"
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": true
+    }
+  },
+  "upload_source_maps": true,
+  "compatibility_flags": ["nodejs_compat"],
+  "secrets": {
+    "required": ["JWT_SECRET", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"]
+  },
+  "ai": {
+    "binding": "AI",
+    "remote": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "[数据库名称]",
+      "database_id": "[数据库 ID]",
+      "migrations_dir": "drizzle"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2_BUCKET",
+      "bucket_name": "[R2 桶名称]"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "CounterAgent",
+        "class_name": "CounterAgent"
+      },
+      {
+        "name": "ChatAgent",
+        "class_name": "ChatAgent"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["CounterAgent"]
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["ChatAgent"]
+    }
+  ],
+  "workflows": [
+    {
+      "name": "D1_Backup_WorkerFlow",
+      "binding": "D1_BACKUP_WF",
+      "class_name": "D1BackupWorkflow"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "[KV 命名空间 ID]"
+    }
+  ]
+  /**
+   * Smart Placement
+   * https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
+   */
+  // "placement": {  "mode": "smart" }
+  /**
+   * Bindings
+   * Bindings allow your Worker to interact with resources on the Cloudflare Developer Platform, including
+   * databases, object storage, AI inference, real-time communication and more.
+   * https://developers.cloudflare.com/workers/runtime-apis/bindings/
+   */
+  /**
+   * Environment Variables
+   * https://developers.cloudflare.com/workers/wrangler/configuration/#environment-variables
+   * Note: Use secrets to store sensitive data.
+   * https://developers.cloudflare.com/workers/configuration/secrets/
+   */
+  // "vars": {  "MY_VARIABLE": "production_value" }
+  /**
+   * Static Assets
+   * https://developers.cloudflare.com/workers/static-assets/binding/
+   */
+  // "assets": {  "directory": "./public/",  "binding": "ASSETS" }
+  /**
+   * Service Bindings (communicate between multiple Workers)
+   * https://developers.cloudflare.com/workers/wrangler/configuration/#service-bindings
+   */
+  // "services": [  {   "binding": "MY_SERVICE",   "service": "my-service"  } ]
+}
