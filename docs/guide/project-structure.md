@@ -4,7 +4,6 @@
 .
 ├── docs/                    # VitePress 文档与 OpenAPI 生成物
 │   ├── .vitepress/          # 文档站配置与构建缓存
-│   ├── .agents/             # Agent 内部资料（不进入公开站点）
 │   ├── guide/               # 使用指南
 │   ├── api/                 # API 说明
 │   ├── openapi.json         # Chanfana 生成的 OpenAPI 文档

@@ -1,172 +1,115 @@
 # Agent Field Notes
 
-## Meta Note
+**Meta Note**: This is the primary agent knowledge base file.`CLAUDE.md` and `GEMINI.md` are symlinks to this file—always edit `AGENTS.md` directly.When learning something new about the codebase that would help with future tasks, update this file immediately.
 
-This is the primary agent knowledge base file.
+**Project Available Skills**: `prepare-pr`, `write-project-docs`
 
-- `CLAUDE.md` and `GEMINI.md` are symlinks to this file—always edit `AGENTS.md` directly.
-- When learning something new about the codebase that would help with future tasks, update this file immediately.
-- Available Skills: prepare-pr, write-project-docs
-
----
+**LLM Reference**: When searching for relevant materials, please prioritize the following entry points. [Hono](https://hono.dev/llms.txt), [Cloudflare Workers](.agents/docs/cloudflare-workers.md), [Drizzle ORM](https://orm.drizzle.team/llms-full.txt)
 
 ## Language
 
 - The primary language used in this codebase is **TypeScript**.
 - Version: **v7.0.2**.
+- Package manager: **Bun**.
 
 ---
 
-## Hazardous Operations
+## 高风险操作
 
-The following operations must always be confirmed before execution:
+执行以下操作前必须始终获得确认：
 
-- Deleting files
-- Large-scale refactoring
-- Modifying Git history
-- `git commit`
-- `git push`
-- Changing environment configuration
-- Changing CI
-- Database changes
-
----
-
-## Prohibited Matters
-
-Unless explicitly stated by the user, it is prohibited to call skills related to `superpower`.
+- 删除文件
+- 大规模重构
+- 修改 Git 历史
+- 执行 `git commit`
+- 执行 `git push`
+- 修改环境配置
+- 修改 CI
+- 修改数据库
 
 ---
 
-## Progressive Disclosure
+## 渐进式披露
 
-Follow the principle of progressive disclosure when working with project instructions and documentation.
+处理项目说明和文档时，应遵循渐进式披露原则。
 
-- Avoid loading or maintaining unnecessary context.
-- Only introduce additional rules, details, or documentation when they are relevant to the current task.
-- If you discover global principles, conventions, or rules that need to be followed frequently across the project, update the `AGENTS.md` file to record them.
-- Keep `AGENTS.md` focused on reusable project-level knowledge rather than task-specific instructions.
+- 避免加载或维护不必要的上下文。
+- 仅在附加规则、细节或文档与当前任务相关时引入它们。
+- 如果发现需要在整个项目中频繁遵循的全局原则、约定或规则，应更新 `AGENTS.md` 文件进行记录。
+- `AGENTS.md` 应专注于可复用的项目级知识，而不是特定任务的临时说明。
 
 ---
 
-## Database Operations
+## 数据库
 
-- For D1 database operations, prioritize using the local database for development.
-- All table migration files must be generated using `drizzle-kit`.
-  - Store migration files in `drizzle/migrations`.
-  - Configure the database connection in `drizzle.config.ts`.
-- Use the following command to apply migrations to the D1 database:
+- 项目数据库为 Cloudflare D1（SQLite）。
+- 对数据库进行操作时，优先使用本地数据库。
+- 所有数据库表迁移文件必须使用 `drizzle-kit` 生成。
+- 将迁移文件存放在 `drizzle/migrations` 中。
+- 在 `drizzle.config.ts` 中配置数据库连接。
+- 数据库命令：
 
   ```bash
+  drizzle-kit generate
   wrangler d1 migrations apply
   ```
 
-- Define all table schemas in `src/db/schema.ts`.
-- Centralize all CRUD operations in `src/db/queries.ts`.
-- Organize query methods by resource in static classes (for example, `UserQueries` and `TodoQueries`).
-- Every query method must include Chinese JSDoc describing:
-  - Purpose
-  - Parameters
-  - Return value
+- 所有数据库表 Schema 必须定义在 `src/db/schema.ts` 中。
+- 所有 CRUD 操作必须集中定义在 `src/db/queries.ts` 中。
+- 查询方法应按照资源组织在静态类中，例如 `UserQueries` 和 `TodoQueries`。
+- 每个查询方法都必须包含 JSDoc，并说明：
+  - 用途
+  - 参数
+  - 返回值
 
 ---
 
-## API Points
+## API 端点
 
-- Declare all API endpoints centrally in `src/index.ts`.
-- Use:
-  - `GET` for query operations.
-  - `POST` for write operations.
-- Run `bun run docs`. Refer to `docs/openapi.json` for the current list of API endpoints.
-
-## Authentication
-
-- Hash passwords through `hashPassword()` in `src/libs/utils/index.ts`; verify
-  them through `verifyPassword()`.
-- Store passwords as PBKDF2-HMAC-SHA256 values with 600,000 iterations, a
-  per-password 16-byte random salt, and a 32-byte derived key.
-- Never store plaintext passwords or use a fast, unsalted digest such as a
-  single SHA-256 hash for password storage.
-
-## Tech Stack
-
-The primary tech stack used in this codebase is:
-
-- Cloudflare Workers
-- TypeScript
-- Hono
-- Drizzle ORM
+- 所有 API 端点必须集中声明在 `src/index.ts` 中。
+- 请求方法使用规范：
+  - 查询操作使用 `GET`。
+  - 写入操作使用 `POST`。
 
 ---
 
-## Package Management
+## 测试
 
-- Use Bun as the sole package manager. The required version is pinned in `package.json` via the `packageManager` field.
-- Commit `bun.lock`; do not add npm, Yarn, or pnpm lockfiles.
-- Install dependencies with `bun install --frozen-lockfile` and run project scripts with `bun run <script>`.
-- Keep Node.js available because Wrangler and Chanfana use the Node.js toolchain during local development and deployment.
-
----
-
-## Testing
-
-- Use Vitest with `@cloudflare/vitest-pool-workers` for all Worker tests. Configure the pool in `vitest.config.ts` using `cloudflareTest()` and `wrangler.jsonc`.
-- Store tests in `test/`, and type-check them with `test/tsconfig.json`.
-  - Put Hono or pure logic unit tests in `test/unit/`.
-  - Put Worker binding, D1, or multi-component API tests in `test/integration/<resource>/`, grouped by API resource (for example, `users/` and `todos/`).
-- Apply D1 migrations to the isolated test database via the `TEST_MIGRATIONS` binding in `test/setup.ts`; never use the local development database for automated tests.
-- Test Hono routes directly with `app.request()` when bindings are not needed. Test D1-backed API flows with `exports.default.fetch()` from `cloudflare:workers`.
-- Run tests with `bun run test`; do not use `bun test`, which runs Bun's built-in test runner.
-
-### References
-
-- **Web Framework**
-  - Hono
-  - https://hono.dev/llms.txt
-
-- **Cloudflare Workers**
-  - Read `./docs/.agents/cloudflare-workers.md` for APIs, limits, and best practices.
-
-- **Database**
-  - D1 (SQLite)
-  - KV (Key-Value Store)
-  - Read `./docs/.agents/cloudflare-workers.md` for D1 and KV APIs, limits, and best practices.
-
-- **ORM**
-  - Drizzle ORM
-  - https://orm.drizzle.team/llms-full.txt
+- 所有 Worker 测试均使用 Vitest 和 `@cloudflare/vitest-pool-workers`。
+- 在 `vitest.config.ts` 中使用 `cloudflareTest()` 和 `wrangler.jsonc` 配置测试池。
+- 测试文件统一存放在 `test/` 中，并通过 `test/tsconfig.json` 进行类型检查。
+- 单元测试或纯逻辑单元测试存放在 `test/unit/`。
+- 集成测试、API 测试，按照资源类型存放在 `test/integration/<resource>/` 中，例如 `users/` 和 `orders/`。
+- 在 `test/setup.ts` 中通过 `TEST_MIGRATIONS` Binding，将 D1 迁移应用到隔离的测试数据库。自动化测试不得使用本地开发数据库。
+- 测试基于 D1 的 API 流程时，使用 `cloudflare:workers` 中的 `exports.default.fetch()`。
+- 使用 `bun run test` 运行测试。
 
 ---
 
-## Development Verification
+## 开发验证
 
-After completing any development task:
+完成任何开发任务后：
 
-1. Review the Git staging area.
-   - Verify that only expected changes are included.
-   - Ensure no unintended modifications are present.
+1. 检查 Git 暂存区。
+   - 确认暂存区中只包含预期变更。
+   - 确保不存在意外修改。
 
-2. Perform the complete validation process:
-   1. Run type checking to ensure there are no type errors.
-   2. Run code formatting checks and apply formatting if required.
-   3. Run the relevant test suite to verify functionality.
-   4. Run the project build process to ensure the application can be successfully compiled.
+2. 执行完整的验证流程：
+   1. 运行类型检查，确保不存在类型错误。
+   2. 运行代码格式检查，并在需要时修复格式问题。
+   3. 运行相关测试套件，验证功能是否正常。
+   4. 运行项目构建流程，确保应用能够成功编译。
 
-3. If any validation step fails:
-   - Investigate the issue.
-   - Resolve the issue.
-   - Do not report the task as completed until all validation steps pass.
+3. 如果任何验证步骤失败：
+   - 调查问题原因。
+   - 解决问题。
+   - 在所有验证步骤通过之前，不得将任务报告为已完成。
 
-## Documentation Site (VitePress)
+---
 
-- Human-readable docs are built with VitePress; source lives under `docs/`.
-- Config: `docs/.vitepress/config.ts`.
-- Commands:
-  - `bun run docs:dev` — local docs preview
-  - `bun run docs:build` — build static site to `docs/.vitepress/dist`
-  - `bun run docs:preview` — preview the production build
-  - `bun run docs` — still generates OpenAPI JSON via Chanfana (`docs/openapi.json`)
-- Do not publish `docs/.agents/` (agent-only notes). Exclude via VitePress `srcExclude`.
-- Worker Swagger remains at runtime path `/docs`; the VitePress site is separate (prefer Cloudflare Pages).
+## 文档站点（VitePress）
+
+- 面向开发者阅读的文档使用 VitePress 构建，源文件位于 `docs/` 目录。
+- 配置文件：`docs/.vitepress/config.ts`。
 
 ---

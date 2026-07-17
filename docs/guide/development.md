@@ -60,4 +60,3 @@ bun run docs:dev
 ```
 
 文档源码在 `docs/` 下，配置在 `docs/.vitepress/config.ts`。
-`docs/.agents/` 为内部 Agent 资料，不会出现在公开站点导航中。

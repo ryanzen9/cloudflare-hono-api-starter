@@ -5,7 +5,7 @@ export default defineConfig({
   description: "Cloudflare-hono-api-starter 文档",
   lang: "zh-CN",
   cleanUrls: true,
-  srcExclude: ["**/openapi.json", "**/.agents/**"],
+  srcExclude: ["**/openapi.json"],
   ignoreDeadLinks: true,
   themeConfig: {
     nav: [
