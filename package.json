@@ -30,6 +30,7 @@
   },
   "dependencies": {
     "@cloudflare/ai-chat": "^0.9.3",
+    "@hono/oauth-providers": "^0.8.6",
     "@hono/zod-openapi": "^1.4.0",
     "agents": "^0.17.4",
     "ai": "^7.0.28",

@@ -165,7 +165,6 @@ beforeAll(async () => {
 `test/request.ts` 提供以下公共方法：
 
 - `request()`：通过 `exports.default.fetch()` 请求完整 Worker，不自动添加认证信息
-- `requestWithEnv()`：直接调用生产 Hono 应用的 `request()`，并传入 `DB`、`JWT_SECRET`
 - `genInitUser()`：生成包含随机用户名、密码和邮箱的注册数据
 - `registerUser()`：调用 `/api/register` 注册测试用户
 - `login(user)`：使用传入的用户名和密码调用 `/api/login`
@@ -190,19 +189,7 @@ export const genInitUser = () => ({
 });
 ```
 
-`requestWithEnv()` 复用 `src/index.ts` 默认导出的生产 Hono 应用，因此测试和 Worker 入口使用同一套路由声明；它不会调用 Worker 默认导出的 `fetch()`：
-
-```typescript
-import app from "../src";
-
-export const requestWithEnv = (path: string, init?: RequestInit) =>
-  app.request(path, init, {
-    DB: env.DB,
-    JWT_SECRET: env.JWT_SECRET
-  });
-```
-
-新增或调整 API 路由时，只需维护 `src/index.ts` 中的端点声明。需要验证完整 Worker 入口时使用 `request()`；只需要直接调用 Hono 应用并显式传入 Binding 时使用 `requestWithEnv()`。
+新增或调整 API 路由时，只需维护 `src/index.ts` 中的端点声明。需要验证完整 Worker 入口时使用 `request()`；
 
 ## 集成测试
 

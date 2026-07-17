@@ -1,9 +1,17 @@
+import { fromHono } from "chanfana";
 import { env } from "cloudflare:workers";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createAppFromFactory } from "../../../src/app";
+import { config } from "../../../src/config";
 import { OAuthTransactions } from "../../../src/db/zod";
+import {
+  GithubAuthLogin,
+  GithubHonoAuthLogin
+} from "../../../src/endpoints/auth/github-login";
 import { jwtVerify } from "../../../src/libs/auth/jwt";
+import { GithubAuthMiddlewares } from "../../../src/libs/auth/oauth/github";
 import { createCodeChallenge } from "../../../src/libs/auth/oauth/github/crypto";
-import { genInitUser, registerUser, request } from "../../request";
+import { genInitUser, registerUser } from "../../request";
 
 interface ApiSuccess<T> {
   success: true;
@@ -19,6 +27,27 @@ interface LoginResult {
 afterEach(() => {
   vi.restoreAllMocks();
 });
+
+const authUrl1 = new URL(`${env.API_ORIGIN}/auth/github/login`);
+const authUrl2 = new URL(`${env.API_ORIGIN}/oauth/github/login`);
+
+const request = async (path: string, options?: RequestInit) => {
+  const openapi = fromHono(createAppFromFactory(config));
+
+  openapi.get(authUrl1.pathname, GithubAuthLogin);
+
+  openapi.use(authUrl2.pathname, GithubAuthMiddlewares);
+  openapi.get(authUrl2.pathname, GithubHonoAuthLogin);
+
+  return openapi.request(path, options, {
+    DB: env.DB,
+    JWT_SECRET: env.JWT_SECRET,
+    API_ORIGIN: env.API_ORIGIN,
+    GITHUB_CLIENT_ID: env.GITHUB_CLIENT_ID,
+    GITHUB_CLIENT_SECRET: env.GITHUB_CLIENT_SECRET,
+    KV: env.KV
+  });
+};
 
 const startGithubOAuth = async () => {
   const response = await request("/auth/github/login", {

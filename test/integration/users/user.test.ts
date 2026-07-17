@@ -4,8 +4,7 @@ import {
   jsonHeaders,
   login,
   registerUser,
-  request,
-  requestWithEnv
+  request
 } from "../../request";
 
 interface ApiSuccess<T> {
@@ -40,7 +39,7 @@ describe("User API", async () => {
   });
 
   it("creates, queries, updates, and deletes a user", async () => {
-    const detailResponse = await requestWithEnv(`/api/users/${userId}`, {
+    const detailResponse = await request(`/api/users/${userId}`, {
       headers: headers
     });
     expect(detailResponse.status).toBe(200);

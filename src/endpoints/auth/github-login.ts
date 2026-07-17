@@ -8,6 +8,7 @@ import { getDB } from "../../db/dao";
 import { AuthQueries, UserQueries } from "../../db/queries";
 import { OAuthTransactions } from "../../db/zod";
 import { JwtPayload, jwtSign } from "../../libs/auth/jwt";
+import { GithubAuthCallback } from "../../libs/auth/oauth/github";
 import {
   createCodeChallenge,
   createRandomValue
@@ -17,7 +18,52 @@ import { AppContext } from "../../types";
 import { ApiRes, RequestQuery, ResponseObjectBody } from "../rest";
 import { githubLoginDto, loginResDto } from "./loginDto";
 
-export class GithubLogin extends OpenAPIRoute {
+const loginWithGithub = async (
+  db: any,
+  githubUser: {
+    id: number;
+    login: string;
+    name: string | null;
+    email: string | null;
+    avatar_url: string;
+  },
+  tokenSecret: string
+) => {
+  const auth = await AuthQueries.loginWithGithub(db, {
+    ...githubUser
+  });
+
+  const user = await UserQueries.findById(db, auth?.userId || 0);
+
+  if (!auth) {
+    Assert.throwBadRequest("Failed to login or register user with GitHub");
+  }
+
+  if (!user) {
+    Assert.throwBadRequest("User not found after GitHub login");
+  }
+
+  const payload: JwtPayload = {
+    sub: auth.id.toString(),
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + 60 * 60,
+    data: {
+      userId: user.id,
+      username: user.name
+    }
+  };
+
+  const token = await jwtSign(payload, tokenSecret);
+
+  const result = loginResDto.parse({
+    token,
+    userId: user.id,
+    username: user.name
+  });
+  return result;
+};
+
+export class GithubAuthLogin extends OpenAPIRoute {
   schema = {
     tags: ["Auth"],
     summary: "Login a user With Github OAuth",
@@ -155,39 +201,56 @@ export class GithubLogin extends OpenAPIRoute {
     const email =
       emails.find((email) => email.primary && email.verified)?.email || null;
 
-    const auth = await AuthQueries.loginWithGithub(db, {
-      ...githubUser,
-      email
-    });
+    const result = await loginWithGithub(
+      db,
+      {
+        id: githubUser.id,
+        login: githubUser.login,
+        name: githubUser.name,
+        email: email,
+        avatar_url: githubUser.avatar_url
+      },
+      c.env.JWT_SECRET
+    );
 
-    const user = await UserQueries.findById(db, auth?.userId || 0);
+    return c.json(ApiRes.success(result), 201);
+  }
+}
 
-    if (!auth) {
-      Assert.throwBadRequest("Failed to login or register user with GitHub");
+export class GithubHonoAuthLogin extends OpenAPIRoute {
+  schema = {
+    tags: ["Auth"],
+    summary: "Login a user With Github OAuth using Hono Middleware",
+    responses: {
+      302: {
+        description: "Redirect to Github OAuth login page"
+      },
+      ...ResponseObjectBody(loginResDto)
+    }
+  };
+
+  async handle(c: AppContext) {
+    const data = GithubAuthCallback(c);
+
+    const db = getDB(c.env);
+
+    const githubUser = data.githubUser;
+
+    if (!githubUser) {
+      Assert.throwBadRequest("GitHub user information is missing");
     }
 
-    if (!user) {
-      Assert.throwBadRequest("User not found after GitHub login");
-    }
-
-    const payload: JwtPayload = {
-      sub: auth.id.toString(),
-      iat: Math.floor(Date.now() / 1000),
-      exp: Math.floor(Date.now() / 1000) + 60 * 60,
-      data: {
-        userId: user.id,
-        username: user.name
-      }
-    };
-
-    const jwtSecret = c.env.JWT_SECRET;
-    const token = await jwtSign(payload, jwtSecret);
-
-    const result = loginResDto.parse({
-      token,
-      userId: user.id,
-      username: user.name
-    });
+    const result = await loginWithGithub(
+      db,
+      {
+        id: githubUser.id ?? 0,
+        login: githubUser.login ?? "",
+        name: githubUser.name ?? "",
+        email: githubUser.email ?? "",
+        avatar_url: githubUser.avatar_url ?? ""
+      },
+      c.env.JWT_SECRET
+    );
 
     return c.json(ApiRes.success(result), 201);
   }

@@ -1,9 +1,10 @@
 import { createAppFromFactory, createOpenApiFromFactory } from "./app";
 import { config } from "./config";
 import { AIHealth } from "./endpoints/ai/health";
-import { GithubLogin } from "./endpoints/auth/github-login";
+import { GithubHonoAuthLogin } from "./endpoints/auth/github-login";
 import { Login } from "./endpoints/auth/login";
 import { Register } from "./endpoints/auth/register";
+// import { GithubAuthLogin } from "./endpoints/auth/github-login";
 import { Download } from "./endpoints/oss/download";
 import { Upload } from "./endpoints/oss/upload";
 import { TodoCreate } from "./endpoints/todos/todoCreate";
@@ -17,6 +18,7 @@ import { UserDetail } from "./endpoints/users/userDetail";
 import { UserList } from "./endpoints/users/userList";
 import { UserTodoList } from "./endpoints/users/userTodoList";
 import { UserUpdate } from "./endpoints/users/userUpdate";
+import { GithubAuthMiddlewares } from "./libs/auth/oauth/github";
 
 const packageJson = await import("../package.json");
 
@@ -45,7 +47,9 @@ openapi.registry.registerComponent("securitySchemes", "bearerAuth", {
 openapi.post("/api/login", Login);
 openapi.post("/api/register", Register);
 
-openapi.get("/auth/github/login", GithubLogin);
+// openapi.get("/auth/github/login", GithubAuthLogin);
+openapi.use("/auth/github/login", GithubAuthMiddlewares);
+openapi.get("/auth/github/login", GithubHonoAuthLogin);
 
 openapi.get("/api/download/:key", Download);
 openapi.post("/api/upload", Upload);
