@@ -64,8 +64,8 @@ const loginWithGithub = async (
   return result;
 };
 
-const loginSuccessUrl = "https://example.com/login/success";
-const loginFailureUrl = "https://example.com/login/failure";
+const loginSuccessUrl = "http://localhost:5174/login/success";
+const loginFailureUrl = "http://localhost:5174/login/failure";
 
 const responses = {
   302: {
