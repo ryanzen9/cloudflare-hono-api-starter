@@ -1,35 +1,72 @@
 import { OpenAPIRoute } from "chanfana";
 import {
   exchangeOAuthTransactions,
-  getOAuthTransactions
+  getOAuthTransactions,
+  setOAuthTransactions
 } from "../../db/cache";
 import { getDB } from "../../db/dao";
 import { AuthQueries, UserQueries } from "../../db/queries";
+import { OAuthTransactions } from "../../db/zod";
 import { JwtPayload, jwtSign } from "../../libs/auth/jwt";
+import {
+  createCodeChallenge,
+  createRandomValue
+} from "../../libs/auth/oauth/github/crypto";
 import { Assert } from "../../libs/error";
 import { AppContext } from "../../types";
 import { ApiRes, RequestQuery, ResponseObjectBody } from "../rest";
-import { githubCallbackQueryDto, loginResDto } from "./loginDto";
+import { githubLoginDto, loginResDto } from "./loginDto";
 
-type GitHubUser = {
-  id: number;
-  login: string;
-  name: string | null;
-  email: string | null;
-  avatar_url: string;
-};
-
-export class GithubLoginCallback extends OpenAPIRoute {
+export class GithubLogin extends OpenAPIRoute {
   schema = {
     tags: ["Auth"],
-    summary: "Callback for Github OAuth login",
-    request: RequestQuery(githubCallbackQueryDto),
-    responses: ResponseObjectBody(loginResDto)
+    summary: "Login a user With Github OAuth",
+    request: RequestQuery(githubLoginDto),
+    responses: {
+      302: {
+        description: "Redirect to Github OAuth login page"
+      },
+      ...ResponseObjectBody(loginResDto)
+    }
   };
 
   async handle(c: AppContext) {
     const data = await this.getValidatedData<typeof this.schema>();
-    const { code, state } = data.query;
+
+    if (data.query.code && data.query.state) {
+      // 回调处理
+      return this.callback(c, data.query.code, data.query.state);
+    }
+
+    const state = createRandomValue();
+    const codeVerifier = createRandomValue(48);
+    const codeChallenge = await createCodeChallenge(codeVerifier);
+
+    const oauthTransaction: OAuthTransactions = {
+      stateHash: state,
+      provider: "github",
+      codeVerifier: codeVerifier,
+      intent: "login",
+      initiatorUserId: 0,
+      redirectTo: `${c.env.API_ORIGIN}/auth/github/login`,
+      expiresAt: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+
+    await setOAuthTransactions(c.env, state, oauthTransaction);
+    const url = new URL("https://github.com/login/oauth/authorize");
+    url.searchParams.set("client_id", c.env.GITHUB_CLIENT_ID);
+    url.searchParams.set("redirect_uri", oauthTransaction.redirectTo);
+    url.searchParams.set("scope", "read:user user:email");
+    url.searchParams.set("state", state);
+    url.searchParams.set("code_challenge", codeChallenge);
+    url.searchParams.set("code_challenge_method", "S256");
+
+    return c.redirect(url.toString());
+  }
+
+  async callback(c: AppContext, code: string, state: string) {
     const db = getDB(c.env);
 
     if (!code || !state) {
@@ -96,7 +133,7 @@ export class GithubLoginCallback extends OpenAPIRoute {
       Assert.throwBadRequest("Failed to fetch user information from GitHub");
     }
 
-    const githubUser = await userResponse.json<GitHubUser>();
+    const githubUser = await userResponse.json<any>();
 
     const emailsResponse = await fetch("https://api.github.com/user/emails", {
       headers: {

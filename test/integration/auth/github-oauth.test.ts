@@ -21,7 +21,7 @@ afterEach(() => {
 });
 
 const startGithubOAuth = async () => {
-  const response = await request("/auth/github/login-start", {
+  const response = await request("/auth/github/login", {
     redirect: "manual"
   });
 
@@ -37,7 +37,7 @@ const startGithubOAuth = async () => {
   expect(authorizeUrl.pathname).toBe("/login/oauth/authorize");
   expect(authorizeUrl.searchParams.get("client_id")).toBe(env.GITHUB_CLIENT_ID);
   expect(authorizeUrl.searchParams.get("redirect_uri")).toBe(
-    `${env.API_ORIGIN}/auth/github/login/callback`
+    `${env.API_ORIGIN}/auth/github/login`
   );
   expect(authorizeUrl.searchParams.get("scope")).toBe("read:user user:email");
   expect(authorizeUrl.searchParams.get("code_challenge_method")).toBe("S256");
@@ -166,7 +166,7 @@ describe("GitHub OAuth API", () => {
     });
 
     const response = await request(
-      `/auth/github/login/callback?${callbackQuery.toString()}`,
+      `/auth/github/login?${callbackQuery.toString()}`,
       { redirect: "manual" }
     );
 
@@ -225,7 +225,7 @@ describe("GitHub OAuth API", () => {
     const fetchSpy = vi.spyOn(globalThis, "fetch");
 
     const response = await request(
-      "/auth/github/login/callback?code=test-code&state=unknown-state"
+      "/auth/github/login?code=test-code&state=unknown-state"
     );
 
     expect(response.status).toBe(400);

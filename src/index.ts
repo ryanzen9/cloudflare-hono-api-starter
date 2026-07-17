@@ -1,8 +1,7 @@
 import { createAppFromFactory, createOpenApiFromFactory } from "./app";
 import { config } from "./config";
 import { AIHealth } from "./endpoints/ai/health";
-import { GithubLoginCallback } from "./endpoints/auth/github-login-callback";
-import { GithubLoginStart } from "./endpoints/auth/github-login-start";
+import { GithubLogin } from "./endpoints/auth/github-login";
 import { Login } from "./endpoints/auth/login";
 import { Register } from "./endpoints/auth/register";
 import { Download } from "./endpoints/oss/download";
@@ -46,8 +45,7 @@ openapi.registry.registerComponent("securitySchemes", "bearerAuth", {
 openapi.post("/api/login", Login);
 openapi.post("/api/register", Register);
 
-openapi.get("/auth/github/login-start", GithubLoginStart);
-openapi.get("/auth/github/login/callback", GithubLoginCallback);
+openapi.get("/auth/github/login", GithubLogin);
 
 openapi.get("/api/download/:key", Download);
 openapi.post("/api/upload", Upload);
