@@ -8,6 +8,21 @@
 - Node.js（Wrangler / Chanfana 本地工具链需要）
 - Cloudflare 账号（部署时需要）
 
+## 使用 CLI 创建项目
+
+```bash
+bunx @ryanzeng/cfo-cli init my-api
+cd my-api
+```
+
+CLI 默认安装依赖。只需要生成项目文件时，使用：
+
+```bash
+bunx @ryanzeng/cfo-cli init my-api --no-install
+```
+
+如果直接克隆模板仓库，请按照下一节手动安装依赖。
+
 ## 安装
 
 ```bash

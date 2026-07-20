@@ -1,0 +1,49 @@
+{
+  "name": "@ryanzeng/cfo-cli",
+  "version": "0.1.0",
+  "description": "Create a Cloudflare Workers and Hono API project",
+  "keywords": [
+    "api",
+    "cli",
+    "cloudflare",
+    "hono",
+    "starter",
+    "workers"
+  ],
+  "author": "Ryan Zeng <rubyceng0326@gmail.com>",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ryanzen9/cloudflare-hono-api-starter.git",
+    "directory": "packages/cli"
+  },
+  "bin": {
+    "cfo-cli": "src/index.ts"
+  },
+  "files": [
+    "src",
+    "template",
+    "template-manifest.json",
+    "README.md"
+  ],
+  "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build:template": "bun run scripts/build-template.ts",
+    "prepack": "bun run build:template",
+    "test": "vitest run --config vitest.config.ts",
+    "typecheck": "tsc -p tsconfig.json",
+    "check": "oxfmt --check . && oxlint src/ scripts/ test/ vitest.config.ts && bun run typecheck"
+  },
+  "devDependencies": {
+    "@types/node": "^25.9.1",
+    "oxfmt": "^0.52.0",
+    "oxlint": "^1.67.0",
+    "typescript": "^7.0.2",
+    "vitest": "^4.1.0"
+  },
+  "engines": {
+    "bun": ">=1.3.0"
+  }
+}

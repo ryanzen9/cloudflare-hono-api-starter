@@ -1,0 +1,78 @@
+/**
+ * Wrangler automatically provisions draft bindings for local development and
+ * fills remote resource identifiers when the project is deployed interactively.
+ */
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "__PROJECT_NAME__",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-05-25",
+  "vars": {
+    "API_ORIGIN": "http://localhost:8787",
+    "REGISTER_OPEN": "false"
+  },
+  "observability": {
+    "logs": {
+      "enabled": true,
+      "invocation_logs": true
+    },
+    "traces": {
+      "enabled": true
+    }
+  },
+  "upload_source_maps": true,
+  "compatibility_flags": ["nodejs_compat"],
+  "secrets": {
+    "required": ["JWT_SECRET", "GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"]
+  },
+  "ai": {
+    "binding": "AI",
+    "remote": true
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "__PROJECT_NAME__",
+      "migrations_dir": "drizzle"
+    }
+  ],
+  "r2_buckets": [
+    {
+      "binding": "R2_BUCKET"
+    }
+  ],
+  "durable_objects": {
+    "bindings": [
+      {
+        "name": "CounterAgent",
+        "class_name": "CounterAgent"
+      },
+      {
+        "name": "ChatAgent",
+        "class_name": "ChatAgent"
+      }
+    ]
+  },
+  "migrations": [
+    {
+      "tag": "v1",
+      "new_sqlite_classes": ["CounterAgent"]
+    },
+    {
+      "tag": "v2",
+      "new_sqlite_classes": ["ChatAgent"]
+    }
+  ],
+  "workflows": [
+    {
+      "name": "__PROJECT_NAME__-d1-backup",
+      "binding": "D1_BACKUP_WF",
+      "class_name": "D1BackupWorkflow"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV"
+    }
+  ]
+}

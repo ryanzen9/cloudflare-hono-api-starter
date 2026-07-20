@@ -83,6 +83,21 @@ Cloudflare Hono API Starter
 
 ## 快速开始
 
+### 使用 CLI 创建项目
+
+```bash
+bunx @ryanzeng/cfo-cli init my-api
+cd my-api
+```
+
+CLI 默认会安装依赖。添加 `--no-install` 可以只生成项目文件：
+
+```bash
+bunx @ryanzeng/cfo-cli init my-api --no-install
+```
+
+如果直接克隆本仓库，请继续执行下面的安装和配置步骤。
+
 ### 1. 安装依赖
 
 ```bash
